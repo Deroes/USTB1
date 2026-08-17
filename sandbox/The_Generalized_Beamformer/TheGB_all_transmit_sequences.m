@@ -87,8 +87,11 @@ for f = 1:length(all_filenames)
     %% Single transmit image
     % Showing a single transmit event before coherent compounding. This
     % illustrates the raw contribution of one transmit to the final image.
-    tools.publish_beamformed_snap(b_data, ...
-        sprintf('%s - Single Transmit', tag_title{f}), dynamic_range, 'log', selected_tx(f));
+    b_data_tx = uff.beamformed_data(b_data);
+    b_data_tx.data = b_data.data(:, 1, 1, selected_tx(f));
+    tools.publish_beamformed_snap(b_data_tx, ...
+        sprintf('%s - Single Transmit (#%d)', tag_title{f}, selected_tx(f)), ...
+        dynamic_range, 'log');
 
     %% Coherent compounding
     % All transmit events are coherently summed to produce the final

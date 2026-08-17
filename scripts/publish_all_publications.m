@@ -16,6 +16,7 @@ addpath(genpath(ustb_root));
 % Each row: relative folder under publications/, absolute path to .m
 jobs = {
     'preprint/generalized_beamformer', fullfile(ustb_root, 'sandbox', 'The_Generalized_Beamformer', 'CPWC_double_adaptive_redone.m')
+    'preprint/generalized_beamformer', fullfile(ustb_root, 'sandbox', 'The_Generalized_Beamformer', 'TheGB_all_transmit_sequences.m')
     'TUSON/Vralstad_et_al_2026_Retrospective_transmit_correction_of_blocked_arrays', fullfile(ustb_root, 'publications', 'TUSON', 'Vralstad_et_al_2026_Retrospective_transmit_correction_of_blocked_arrays', 'Correction_of_simulated_blockage.m')
     'TUFFC/Dynamic_range_2020', fullfile(ustb_root, 'publications', 'DynamicRange', 'dynamic_range_test.m')
     'TUFFC/Prieur_fDMAS_2018', fullfile(ustb_root, 'publications', 'TUFFC', 'Prieur_et_al_Signal_coherence_and_image_amplitude_with_the_fDMAS', 'FI_UFF_FIeldII_simulations_Fig2_and_Fig3.m')

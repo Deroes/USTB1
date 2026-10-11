@@ -17,6 +17,36 @@ contributing USTB (UltraSound ToolBox) datasets to the
 | `export_openhrf_previews.m` | MATLAB: renders the canonical USTB DAS reference B-mode PNGs (catalog-matching) |
 | `convert_ustb_to_openh_rf_matlab.m` | Legacy MATLAB prototype (superseded by the Python converter) |
 | `generate_labels.m` | MATLAB script: DAS beamforming labels |
+| `openhrf_download_subset.py` | Streams a frame range of an OpenH-RF zea file from the Hugging Face Hub into a small, MATLAB-readable (gzip) local file |
+| `openhrf_to_uff.m` | MATLAB: OpenH-RF (zea) plane-wave HDF5 -> `uff.channel_data` (the reverse direction) |
+| `ULMShare_openhrf_to_uff_example.m` | MATLAB example: ULMShare mouse-brain IQ data -> UFF -> DAS B-mode and power Doppler |
+
+## Reading OpenH-RF data into USTB
+
+`openhrf_to_uff.m` converts OpenH-RF plane-wave acquisitions (currently tested on
+[ULMShare](https://huggingface.co/datasets/nvidia/OpenH-RF/tree/main/ulmshare))
+to `uff.channel_data`. The ULMShare files are 60-370 GB each and their raw data
+is Blosc-compressed, so first stream a frame subset to a local file:
+
+```bash
+pip install h5py hdf5plugin huggingface_hub numpy
+python openhrf_download_subset.py \
+    --source hf://nvidia/OpenH-RF/ulmshare/data/mouse_10_acquisition_1_zea.hdf5 \
+    --output C:/Data/OpenH-RF/ulmshare/mouse_10_acquisition_1_frames_20000_20399.hdf5 \
+    --first-frame 20000 --n-frames 400
+```
+
+then in MATLAB:
+
+```matlab
+channel_data = openhrf_to_uff('C:/Data/OpenH-RF/ulmshare/mouse_10_acquisition_1_frames_20000_20399.hdf5');
+```
+
+The zea transmit timing (`t0_delays` with min 0, `initial_times`) is mapped to
+the USTB origin-referenced plane-wave model as
+`wave.delay = initial_times - t_origin`, where `t_origin` is the time the zea
+wavefront crosses the origin. See `ULMShare_openhrf_to_uff_example.m` for a
+full B-mode / power-Doppler example.
 
 ## PICMUS policy
 

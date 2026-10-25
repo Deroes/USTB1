@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
 
-from ustb.plotting import plot_beamformed_data
+from ustb.plotting import animate_beamformed_data, plot_beamformed_data
 
 
 class BeamformedData:
@@ -25,6 +25,12 @@ class BeamformedData:
 
     def plot(self, title="", dynamic_range=60, frame=0):
         return plot_beamformed_data(self, title=title, dynamic_range=dynamic_range, frame=frame)
+
+    def animate(self, title="", dynamic_range=60, fps=5, controls=None):
+        """Play all frames as a looping movie; see ustb.plotting.animate_beamformed_data."""
+        return animate_beamformed_data(
+            self, title=title, dynamic_range=dynamic_range, fps=fps, controls=controls
+        )
 
     def _image_shape(self):
         """Return (N_rows, N_cols) for reshaping self.data's pixel axis.

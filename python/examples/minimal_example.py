@@ -91,9 +91,11 @@ os.makedirs(os.path.dirname(output_path), exist_ok=True)
 fig.savefig(output_path, dpi=150, bbox_inches="tight")
 print(f"Image saved to {output_path}")
 
-# %% Plot all frames
-N_frames = b_data.data.shape[-1]
-for frame in range(N_frames):
-    b_data.plot(title=f"Human Heart, frame {frame + 1}/{N_frames}", dynamic_range=60, frame=frame)
-
+# %% Play all frames as a movie loop
+# Run as a script, plt.show() opens the plot and plays the movie in windows.
+# In the Interactive Window the last line shows the movie as a player with
+# loop controls, so it has to stay last in the cell.
+plt.rcParams["animation.html"] = "jshtml"
+anim = b_data.animate(title="Human Heart", dynamic_range=60, fps=5)
 plt.show()
+anim  # noqa: B018 (displayed by the Interactive Window)

@@ -81,13 +81,10 @@ def setup():
     diverging_waves = [_SphericalWave(s, o) for s, o in zip(sources, origins, strict=True)]
 
     sector_scan = SectorScan()
-    sector_scan.__dict__["azimuth_axis"] = ref["sector/azimuth_axis"][:].ravel()
-    sector_scan.__dict__["depth_axis"] = ref["sector/depth_axis"][:].ravel()
-    apex = Point()
-    apex.__dict__.update(
-        distance=np.float64(0.0), azimuth=np.float64(0.0), elevation=np.float64(0.0)
-    )
-    sector_scan.__dict__["origin"] = apex
+    sector_scan.azimuth_axis = ref["sector/azimuth_axis"][:].ravel()
+    sector_scan.depth_axis = ref["sector/depth_axis"][:].ravel()
+    apex = Point(distance=np.float64(0.0), azimuth=np.float64(0.0), elevation=np.float64(0.0))
+    sector_scan.origin = apex
 
     linear_perm = match_pixels(
         (ref["linear/x"][:], ref["linear/z"][:]), (linear_scan.x, linear_scan.z)
@@ -150,21 +147,18 @@ def scanline_setup(setup):
     scans = {}
     for name in ("sector1", "sector2"):
         scan = SectorScan()
-        scan.__dict__["azimuth_axis"] = ref[f"scanline/{name}/azimuth_axis"][:].ravel()
-        scan.__dict__["depth_axis"] = depth_axis
-        apex = Point()
-        apex.__dict__.update(
-            distance=np.float64(0.0), azimuth=np.float64(0.0), elevation=np.float64(0.0)
-        )
-        scan.__dict__["origin"] = apex
+        scan.azimuth_axis = ref[f"scanline/{name}/azimuth_axis"][:].ravel()
+        scan.depth_axis = depth_axis
+        apex = Point(distance=np.float64(0.0), azimuth=np.float64(0.0), elevation=np.float64(0.0))
+        scan.origin = apex
         perm = match_pixels(
             (ref[f"scanline/{name}/x"][:], ref[f"scanline/{name}/z"][:]), (scan.x, scan.z)
         )
         scans[name] = (scan, perm)
 
     linear = LinearScan()
-    linear.__dict__["x_axis"] = ref["scanline/linear/x_axis"][:].ravel()
-    linear.__dict__["z_axis"] = ref["scanline/linear/z_axis"][:].ravel()
+    linear.x_axis = ref["scanline/linear/x_axis"][:].ravel()
+    linear.z_axis = ref["scanline/linear/z_axis"][:].ravel()
     perm = match_pixels(
         (ref["scanline/linear/x"][:], ref["scanline/linear/z"][:]), (linear.x, linear.z)
     )

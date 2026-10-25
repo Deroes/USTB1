@@ -29,8 +29,8 @@ class _ChannelData:
 
 def _linear_scan(N_x, N_z, dz=15e-6):
     scan = LinearScan()
-    scan.__dict__["x_axis"] = np.linspace(-2e-3, 2e-3, N_x)
-    scan.__dict__["z_axis"] = 10e-3 + dz * np.arange(N_z)
+    scan.x_axis = np.linspace(-2e-3, 2e-3, N_x)
+    scan.z_axis = 10e-3 + dz * np.arange(N_z)
     return scan
 
 

@@ -216,20 +216,17 @@ class TestApodizationReceiveWindows:
 
 def _sector_scan(azimuth_axis, depth_axis):
     scan = SectorScan()
-    scan.__dict__["azimuth_axis"] = np.asarray(azimuth_axis, dtype=float)
-    scan.__dict__["depth_axis"] = np.asarray(depth_axis, dtype=float)
-    origin = Point()
-    origin.__dict__.update(
-        distance=np.float64(0.0), azimuth=np.float64(0.0), elevation=np.float64(0.0)
-    )
-    scan.__dict__["origin"] = origin
+    scan.azimuth_axis = np.asarray(azimuth_axis, dtype=float)
+    scan.depth_axis = np.asarray(depth_axis, dtype=float)
+    origin = Point(distance=np.float64(0.0), azimuth=np.float64(0.0), elevation=np.float64(0.0))
+    scan.origin = origin
     return scan
 
 
 def _linear_scan(x_axis, z_axis):
     scan = LinearScan()
-    scan.__dict__["x_axis"] = np.asarray(x_axis, dtype=float)
-    scan.__dict__["z_axis"] = np.asarray(z_axis, dtype=float)
+    scan.x_axis = np.asarray(x_axis, dtype=float)
+    scan.z_axis = np.asarray(z_axis, dtype=float)
     return scan
 
 

@@ -41,7 +41,7 @@ def ref():
         values = {name: f[name][()] for name in f}
     x_axis, z_axis = values["x_axis"].ravel(), values["z_axis"].ravel()
     scan = LinearScan()
-    scan.__dict__["x_axis"], scan.__dict__["z_axis"] = x_axis, z_axis
+    scan.x_axis, scan.z_axis = x_axis, z_axis
     # MATLAB linear-scan pixel order: z varies fastest
     perm = match_pixels(
         (np.repeat(x_axis, z_axis.size), np.tile(z_axis, x_axis.size)), (scan.x, scan.z)

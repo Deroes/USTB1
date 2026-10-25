@@ -41,8 +41,8 @@ def ref():
         values = {name: f[name][()] for name in _all_datasets(f)}
     x_axis, z_axis = values["x_axis"].ravel(), values["z_axis"].ravel()
     scan = LinearScan()
-    scan.__dict__["x_axis"] = x_axis.astype(np.float64)
-    scan.__dict__["z_axis"] = z_axis.astype(np.float64)
+    scan.x_axis = x_axis.astype(np.float64)
+    scan.z_axis = z_axis.astype(np.float64)
     # MATLAB linear-scan pixel order: z varies fastest
     ml_x, ml_z = np.repeat(x_axis, z_axis.size), np.tile(z_axis, x_axis.size)
     perm = match_pixels((ml_x, ml_z), (scan.x, scan.z), atol=1e-7)

@@ -37,14 +37,11 @@ def main():
         float(sequence[-1].source.azimuth),
         len(sequence),
     )
-    scan = SectorScan()
-    scan.__dict__["azimuth_axis"] = azimuth_axis
-    scan.__dict__["depth_axis"] = depth_axis
-    origin = Point()
-    origin.__dict__["distance"] = 0.0
-    origin.__dict__["azimuth"] = 0.0
-    origin.__dict__["elevation"] = 0.0
-    scan.__dict__["origin"] = origin
+    scan = SectorScan(
+        azimuth_axis=azimuth_axis,
+        depth_axis=depth_axis,
+        origin=Point(distance=0.0, azimuth=0.0, elevation=0.0),
+    )
 
     # Step 1: Demodulation
     print("Step 1: Demodulation...")

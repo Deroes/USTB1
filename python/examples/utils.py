@@ -1,27 +1,19 @@
 """Shared utilities for examples."""
 
 import os
-import urllib.request
 
 import numpy as np
 from pyuff_ustb.objects import LinearScan
 from pyuff_ustb.objects.uff import Uff
 
-DATA_URL = "https://zenodo.org/records/20261898/files/"
+from ustb.tools import download, zenodo_dataset_files_base
+
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data")
 
 
 def download_dataset(filename):
     """Download dataset if not already present, return full path."""
-    filepath = os.path.join(DATA_PATH, filename)
-    if os.path.exists(filepath):
-        return filepath
-    os.makedirs(DATA_PATH, exist_ok=True)
-    url = DATA_URL + filename
-    print(f"Downloading {url} ...")
-    urllib.request.urlretrieve(url, filepath)
-    print(f"Saved to {filepath}")
-    return filepath
+    return download(filename, zenodo_dataset_files_base(), DATA_PATH)
 
 
 def read_channel_data(filename):
@@ -44,10 +36,10 @@ def make_linear_scan(channel_data, N_x=256, N_z=256, z_max=50e-3):
     """Create a linear scan from channel data probe geometry."""
 
     probe_x = channel_data.probe.x
-    scan = LinearScan()
-    scan.__dict__["x_axis"] = np.linspace(float(probe_x.min()), float(probe_x.max()), N_x)
-    scan.__dict__["z_axis"] = np.linspace(0, z_max, N_z)
-    return scan
+    return LinearScan(
+        x_axis=np.linspace(float(probe_x.min()), float(probe_x.max()), N_x),
+        z_axis=np.linspace(0, z_max, N_z),
+    )
 
 
 def save_image(fig, name):

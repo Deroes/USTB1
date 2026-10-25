@@ -5,11 +5,13 @@ Rindal et al., "The Generalized Beamformer".
 """
 
 import time
-import numpy as np
-from scipy.interpolate import interp1d
 
-from ustb.enums import Dimension, Wavefront
+import numpy as np
+from scipy.signal import hilbert
+
 from ustb.apodization import Apodization
+from ustb.beamformed_data import BeamformedData
+from ustb.enums import Dimension, Wavefront
 
 try:
     from ustb.midprocess._das_kernel import das_kernel
@@ -47,7 +49,6 @@ class DAS:
 
     def go(self):
         """Execute the DAS beamformer. Returns BeamformedData."""
-        from ustb.beamformed_data import BeamformedData
 
         N_pixels = getattr(self.scan, "N_pixels", None) or self.scan.x.size
         N_channels = self.channel_data.N_channels
@@ -158,8 +159,6 @@ class DAS:
             ch_data = ch_data[:, :, :, np.newaxis]
 
         if abs(w0) < np.finfo(np.float32).eps:
-            from scipy.signal import hilbert
-
             ch_data = hilbert(ch_data.real.astype(np.float32), axis=0).astype(np.complex64)
         else:
             ch_data = ch_data.astype(np.complex64)
@@ -169,7 +168,7 @@ class DAS:
         ch_data_time = initial_time + np.arange(N_samples, dtype=np.float32) / sampling_frequency
 
         # Beamform
-        print(f"USTB Python beamformer...", end="", flush=True)
+        print("USTB Python beamformer...", end="", flush=True)
         t_start = time.time()
         bf_data = self._beamform(
             ch_data,

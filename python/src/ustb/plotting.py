@@ -1,7 +1,7 @@
 """Plotting utilities for USTB beamformed data."""
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_beamformed_data(b_data, title="", dynamic_range=60):
@@ -124,7 +124,9 @@ def plot_channel_data(channel_data, n_wave=None, plot_abs=True, title=None):
         return fig, ax
     else:
         fig, axes = plt.subplots(1, 2, figsize=(11, 6))
-        for ax, part, label in zip(axes, [trace.real, trace.imag], ["Real", "Imaginary"]):
+        for ax, part, label in zip(
+            axes, [trace.real, trace.imag], ["Real", "Imaginary"], strict=True
+        ):
             pcm = ax.pcolormesh(
                 np.arange(1, N_channels + 1), time_us, part, cmap="inferno", shading="gouraud"
             )

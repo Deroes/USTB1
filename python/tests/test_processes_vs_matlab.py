@@ -7,14 +7,16 @@ dataset is needed; this runs in CI.
 """
 
 import os
+
+import h5py
 import numpy as np
 import pytest
-import h5py
+from pyuff_ustb.objects import LinearScan
 
-from tests.matlab_compare import match_pixels, assert_pixelwise_match
+from tests.matlab_compare import assert_pixelwise_match, match_pixels
+from ustb import postprocess
 from ustb.beamformed_data import BeamformedData
 from ustb.enums import Dimension
-from ustb import postprocess
 
 REFERENCE_FILE = os.path.join(os.path.dirname(__file__), "ci_reference", "processes.h5")
 
@@ -35,8 +37,6 @@ class _ChannelData:
 
 @pytest.fixture(scope="module")
 def ref():
-    from pyuff_ustb.objects import LinearScan
-
     with h5py.File(REFERENCE_FILE, "r") as f:
         values = {name: f[name][()] for name in _all_datasets(f)}
     x_axis, z_axis = values["x_axis"].ravel(), values["z_axis"].ravel()

@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff"]
+dev = ["pytest", "ruff==0.17.2"]
 
 [project.urls]
 Homepage = "https://www.ustb.no"

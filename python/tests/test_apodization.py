@@ -2,6 +2,9 @@
 
 import numpy as np
 import pytest
+from pyuff_ustb.objects import LinearScan, SectorScan
+from pyuff_ustb.objects.point import Point
+
 from ustb.apodization import Apodization
 from ustb.enums import Window
 
@@ -162,7 +165,7 @@ class TestApodizationPlaneWaveTransmit:
         apo.sequence = [plane_wave(0.0)]
         apo.focus = FakeScan([0.0], [20e-3])
         with pytest.raises(ValueError):
-            apo.data
+            _ = apo.data
 
 
 class TestApodizationDivergingWaveTransmit:
@@ -212,9 +215,6 @@ class TestApodizationReceiveWindows:
 
 
 def _sector_scan(azimuth_axis, depth_axis):
-    from pyuff_ustb.objects import SectorScan
-    from pyuff_ustb.objects.point import Point
-
     scan = SectorScan()
     scan.__dict__["azimuth_axis"] = np.asarray(azimuth_axis, dtype=float)
     scan.__dict__["depth_axis"] = np.asarray(depth_axis, dtype=float)
@@ -227,8 +227,6 @@ def _sector_scan(azimuth_axis, depth_axis):
 
 
 def _linear_scan(x_axis, z_axis):
-    from pyuff_ustb.objects import LinearScan
-
     scan = LinearScan()
     scan.__dict__["x_axis"] = np.asarray(x_axis, dtype=float)
     scan.__dict__["z_axis"] = np.asarray(z_axis, dtype=float)
@@ -284,4 +282,4 @@ class TestApodizationScanline:
         apo.sequence = [None] * 3
         apo.focus = _linear_scan(np.linspace(-5e-3, 5e-3, 8), [10e-3])
         with pytest.raises(ValueError):
-            apo.data
+            _ = apo.data

@@ -14,6 +14,13 @@ For development:
 pip install -e ".[dev]"
 ```
 
+Code is linted and formatted with [ruff](https://docs.astral.sh/ruff/), which CI checks:
+
+```bash
+ruff check --fix src examples tests
+ruff format src examples tests
+```
+
 ## Quick Start
 
 ```python

@@ -7,7 +7,7 @@ FastDemodulation's simpler fixed-length low-pass-only design.
 """
 
 import numpy as np
-from scipy.signal import kaiserord, firwin, lfilter
+from scipy.signal import firwin, kaiserord, lfilter
 
 from ustb.preprocess._channel_data_view import DemodulatedChannelData
 from ustb.tools.power_spectrum import power_spectrum

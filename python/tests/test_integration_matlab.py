@@ -5,11 +5,17 @@ Run with: pytest tests/test_integration_matlab.py -v
 """
 
 import os
+
+import h5py
 import numpy as np
 import pytest
-import h5py
+from pyuff_ustb.objects import SectorScan
+from pyuff_ustb.objects.point import Point
+from pyuff_ustb.objects.uff import Uff
 
-from tests.matlab_compare import match_pixels, assert_pixelwise_match
+from tests.matlab_compare import assert_pixelwise_match, match_pixels
+from ustb.enums import Dimension, Window
+from ustb.midprocess import DAS
 
 REFERENCE_FILE = os.path.join(os.path.dirname(__file__), "matlab_reference.h5")
 DATA_FILE = os.path.join(
@@ -43,11 +49,6 @@ def matlab_ref():
 @pytest.fixture(scope="module")
 def python_result(matlab_ref):
     """Run Python DAS on the same dataset with matching parameters."""
-    from pyuff_ustb.objects.uff import Uff
-    from pyuff_ustb.objects import SectorScan
-    from pyuff_ustb.objects.point import Point
-    from ustb.midprocess import DAS
-    from ustb.enums import Dimension, Window
 
     uff_file = Uff(DATA_FILE)
     channel_data = uff_file.read("channel_data")

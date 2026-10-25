@@ -8,10 +8,12 @@ here on signals with a known coherence.
 
 import numpy as np
 import pytest
+from pyuff_ustb.objects import LinearScan
 
+from ustb import postprocess
+from ustb.apodization import Apodization
 from ustb.beamformed_data import BeamformedData
 from ustb.enums import Dimension, Window
-from ustb import postprocess
 from ustb.postprocess.short_lag_spatial_coherence import _kernel_sum, slsc_lags
 
 
@@ -26,8 +28,6 @@ class _ChannelData:
 
 
 def _linear_scan(N_x, N_z, dz=15e-6):
-    from pyuff_ustb.objects import LinearScan
-
     scan = LinearScan()
     scan.__dict__["x_axis"] = np.linspace(-2e-3, 2e-3, N_x)
     scan.__dict__["z_axis"] = 10e-3 + dz * np.arange(N_z)
@@ -97,8 +97,6 @@ class TestSLSCProcess:
         assert np.isclose(out.data.max(), 1.0)
 
     def test_should_reject_apodization(self):
-        from ustb.apodization import Apodization
-
         slsc = postprocess.ShortLagSpatialCoherence()
         slsc.input, slsc.channel_data = _beamformed(), _ChannelData()
         slsc.K_in_lambda = 1

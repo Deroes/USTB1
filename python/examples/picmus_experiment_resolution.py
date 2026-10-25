@@ -4,14 +4,14 @@ Python equivalent of examples/picmus/experiment_resolution_distortion.m.
 75 plane-wave dataset recorded on a CIRS phantom with a Verasonics L11 probe.
 """
 
-import numpy as np
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
 
 from examples.utils import read_channel_data, read_uff_object, save_image
-from ustb.midprocess import DAS
 from ustb.enums import Dimension, Window
+from ustb.midprocess import DAS
 
 
 def main():

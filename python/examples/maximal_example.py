@@ -4,18 +4,19 @@ Python equivalent of examples/UiO_course/.../maximal_example.m.
 Pipeline: demodulation -> DAS (transmit dimension) -> coherence factor -> median filter.
 """
 
-import numpy as np
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
 
-from examples.utils import read_channel_data, save_image
 from pyuff_ustb.objects import SectorScan
 from pyuff_ustb.objects.point import Point
-from ustb.preprocess import FastDemodulation
+
+from examples.utils import read_channel_data, save_image
+from ustb.enums import Dimension, Window
 from ustb.midprocess import DAS
 from ustb.postprocess import CoherenceFactor, Median
-from ustb.enums import Dimension, Window
+from ustb.preprocess import FastDemodulation
 
 
 def main():

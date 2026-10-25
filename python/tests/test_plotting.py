@@ -4,9 +4,12 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from ustb.plotting import plot_channel_data
+
+rng = np.random.default_rng(0)
 
 
 class FakeChannelData:
@@ -19,7 +22,7 @@ class FakeChannelData:
 class TestPlotChannelData:
     def test_should_return_figure_and_axes_for_abs_mode(self):
         N_samples, N_channels, N_waves = 128, 16, 3
-        data = np.random.randn(N_samples, N_channels, N_waves)
+        data = rng.standard_normal((N_samples, N_channels, N_waves))
         ch_data = FakeChannelData(data)
 
         fig, ax = plot_channel_data(ch_data, plot_abs=True)
@@ -41,8 +44,8 @@ class TestPlotChannelData:
 
     def test_should_return_two_axes_for_real_imaginary_mode(self):
         N_samples, N_channels, N_waves = 64, 8, 1
-        data = np.random.randn(N_samples, N_channels, N_waves) + 1j * np.random.randn(
-            N_samples, N_channels, N_waves
+        data = rng.standard_normal((N_samples, N_channels, N_waves)) + 1j * rng.standard_normal(
+            (N_samples, N_channels, N_waves)
         )
         ch_data = FakeChannelData(data)
 
@@ -53,7 +56,7 @@ class TestPlotChannelData:
 
     def test_should_handle_4d_input_using_first_frame(self):
         N_samples, N_channels, N_waves, N_frames = 32, 4, 1, 3
-        data = np.random.randn(N_samples, N_channels, N_waves, N_frames)
+        data = rng.standard_normal((N_samples, N_channels, N_waves, N_frames))
         ch_data = FakeChannelData(data)
 
         fig, ax = plot_channel_data(ch_data)

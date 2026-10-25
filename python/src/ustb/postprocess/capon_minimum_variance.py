@@ -61,8 +61,8 @@ def _capon_kernel(data_cube, apod_cube, K, L_elements, reg_coef, forward_backwar
                 r0, r1 = k - K, k + K + 1
 
             R = np.zeros((L_new, L_new), dtype=np.complex128)
-            for l in range(first, last - L_new + 2):
-                X = data_cube[r0:r1, e, l : l + L_new]
+            for j in range(first, last - L_new + 2):
+                X = data_cube[r0:r1, e, j : j + L_new]
                 R += np.conj(X).T @ X
             R /= (2 * K + 1) * (M_new - L_new + 1)
             if forward_backward:
@@ -137,7 +137,8 @@ class CaponMinimumVariance:
         if self.dimension == Dimension.both:
             warnings.warn(
                 "Capon minimum variance on both dimensions simultaneously has not "
-                "been done in the literature before, and might not make sense."
+                "been done in the literature before, and might not make sense.",
+                stacklevel=2,
             )
             out = np.zeros((N_pixels, 1, 1, N_frames), dtype=np.complex64)
             # Channel varies fastest in the combined aperture, as in MATLAB

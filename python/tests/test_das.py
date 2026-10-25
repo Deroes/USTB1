@@ -6,8 +6,12 @@ from file I/O, using synthetic data.
 
 import numpy as np
 import pytest
-from ustb.midprocess.das import DAS, das_kernel as DAS_KERNEL
+
 from ustb.enums import Dimension, Wavefront, Window
+from ustb.midprocess.das import DAS
+from ustb.midprocess.das import das_kernel as DAS_KERNEL
+
+rng = np.random.default_rng(0)
 
 
 class FakePoint:
@@ -131,7 +135,7 @@ def make_simple_test_setup(N_elements=16, N_samples=512, N_waves=1, c=1540.0, fs
     waves = [
         FakeWave(wavefront=Wavefront.plane, azimuth=0.0, sound_speed=c) for _ in range(N_waves)
     ]
-    data = np.random.randn(N_samples, N_elements, N_waves, 1).astype(np.float32)
+    data = rng.standard_normal((N_samples, N_elements, N_waves, 1)).astype(np.float32)
     ch_data = FakeChannelData(data, probe, waves, fs=fs, c=c)
     return ch_data, scan
 
@@ -250,8 +254,6 @@ class TestDASBeamformOutput:
         scan = FakeScan(x=[0.0], z=[z_focus])
         waves = [FakeWave(wavefront=Wavefront.plane, azimuth=0.0, sound_speed=c)]
 
-        # Compute expected round-trip time range for initial_time
-        max_delay = z_focus / c + np.sqrt(probe.x[-1] ** 2 + z_focus**2) / c
         t0 = z_focus / c * 0.9
 
         data = np.zeros((N_samples, N_elements, 1, 1), dtype=np.complex64)

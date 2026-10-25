@@ -4,14 +4,14 @@ Python equivalent of examples/uff/CPWC_UFF_Verasonics.m.
 Downloads L7 CPWC data, beamforms with DAS using plane waves and a linear scan.
 """
 
-import numpy as np
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
 
-from examples.utils import read_channel_data, make_linear_scan, save_image
-from ustb.midprocess import DAS
+from examples.utils import make_linear_scan, read_channel_data, save_image
 from ustb.enums import Dimension, Window
+from ustb.midprocess import DAS
 
 
 def main():

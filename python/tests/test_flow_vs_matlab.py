@@ -6,13 +6,15 @@ outputs. No dataset is needed; this runs in CI.
 """
 
 import os
+
+import h5py
 import numpy as np
 import pytest
-import h5py
+from pyuff_ustb.objects import LinearScan
 
 from tests.matlab_compare import match_pixels
-from ustb.beamformed_data import BeamformedData
 from ustb import postprocess, preprocess
+from ustb.beamformed_data import BeamformedData
 
 REFERENCE_FILE = os.path.join(os.path.dirname(__file__), "ci_reference", "flow.h5")
 
@@ -35,8 +37,6 @@ class _RawChannelData:
 
 @pytest.fixture(scope="module")
 def ref():
-    from pyuff_ustb.objects import LinearScan
-
     with h5py.File(REFERENCE_FILE, "r") as f:
         values = {name: f[name][()] for name in f}
     x_axis, z_axis = values["x_axis"].ravel(), values["z_axis"].ravel()

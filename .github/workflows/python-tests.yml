@@ -9,6 +9,28 @@ on:
       - 'python/**'
 
 jobs:
+  lint:
+    name: Python Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install package with dev dependencies
+        working-directory: python
+        run: pip install -e ".[dev]"
+
+      - name: Check lint
+        working-directory: python
+        run: ruff check src examples tests
+
+      - name: Check formatting
+        working-directory: python
+        run: ruff format --check src examples tests
+
   test:
     name: Python Unit Tests (${{ matrix.python-version }})
     runs-on: ubuntu-latest

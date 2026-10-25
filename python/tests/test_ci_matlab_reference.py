@@ -6,12 +6,13 @@ datasets in data/ (the Python Tests workflow downloads and caches them); the
 tests skip when a dataset is missing, so they never start a download.
 """
 
+import importlib
 import os
-import numpy as np
-import pytest
-import h5py
 
-from tests.matlab_compare import match_pixels, assert_pixelwise_match
+import h5py
+import pytest
+
+from tests.matlab_compare import assert_pixelwise_match, match_pixels
 
 REF_DIR = os.path.join(os.path.dirname(__file__), "ci_reference")
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
@@ -33,10 +34,6 @@ CASES = [
 def test_should_match_committed_matlab_reference(ref_file, dataset, example):
     if not os.path.exists(os.path.join(DATA_DIR, dataset)):
         pytest.skip(f"Dataset {dataset} not available in data/")
-    import importlib
-    import matplotlib
-
-    matplotlib.use("Agg")
 
     b_data = importlib.import_module(example).main()
     with h5py.File(os.path.join(REF_DIR, ref_file), "r") as f:

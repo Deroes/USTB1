@@ -60,7 +60,8 @@ class DelayMultiplyAndSum:
         if dimension == Dimension.both:
             warnings.warn(
                 "Delay multiply and sum on both dimensions simultaneously has not "
-                "been done in the literature before, and might not make sense."
+                "been done in the literature before, and might not make sense.",
+                stacklevel=2,
             )
             out = np.zeros((N_pixels, 1, 1, N_frames), dtype=np.complex64)
             apod = (rx[:, :, None] * tx[:, None, :]).reshape(N_pixels, -1, order="F")

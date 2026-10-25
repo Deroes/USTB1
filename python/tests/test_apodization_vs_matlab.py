@@ -6,9 +6,13 @@ Run with: pytest tests/test_apodization_vs_matlab.py -v
 """
 
 import os
+
+import h5py
 import numpy as np
 import pytest
-import h5py
+from pyuff_ustb.objects import LinearScan, SectorScan
+from pyuff_ustb.objects.point import Point
+from pyuff_ustb.objects.uff import Uff
 
 from tests.matlab_compare import match_pixels
 from ustb.apodization import Apodization
@@ -64,10 +68,6 @@ class _SphericalWave:
 
 @pytest.fixture(scope="module")
 def setup():
-    from pyuff_ustb.objects.uff import Uff
-    from pyuff_ustb.objects import SectorScan
-    from pyuff_ustb.objects.point import Point
-
     ref = h5py.File(REFERENCE_FILE, "r")
     picmus = Uff(PICMUS_FILE)
     channel_data = picmus.read("channel_data")
@@ -78,7 +78,7 @@ def setup():
 
     # Diverging waves defined in the MATLAB script (h5py reads them as [wave, xyz])
     sources, origins = ref["tx_div/source"][:], ref["tx_div/origin"][:]
-    diverging_waves = [_SphericalWave(s, o) for s, o in zip(sources, origins)]
+    diverging_waves = [_SphericalWave(s, o) for s, o in zip(sources, origins, strict=True)]
 
     sector_scan = SectorScan()
     sector_scan.__dict__["azimuth_axis"] = ref["sector/azimuth_axis"][:].ravel()
@@ -143,10 +143,6 @@ SCANLINE_CASES = [
 
 @pytest.fixture(scope="module")
 def scanline_setup(setup):
-    from pyuff_ustb.objects import LinearScan, SectorScan
-    from pyuff_ustb.objects.point import Point
-    from pyuff_ustb.objects.uff import Uff
-
     ref, _ = setup
     phased_sequence = Uff(PHASED_FILE).read("channel_data").sequence
     depth_axis = ref["scanline/depth_axis"][:].ravel()

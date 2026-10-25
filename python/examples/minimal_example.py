@@ -17,12 +17,18 @@ the B-mode image. This mirrors the MATLAB code:
 
 import os
 import urllib.request
-import numpy as np
 
-from pyuff_ustb.objects import ChannelData, SectorScan
+import matplotlib
+import numpy as np
+from pyuff_ustb.objects import SectorScan
+from pyuff_ustb.objects.point import Point
+from pyuff_ustb.objects.uff import Uff
+
 from ustb.enums import Dimension, Window
 from ustb.midprocess import DAS
 from ustb.plotting import plot_beamformed_data
+
+matplotlib.use("Agg")
 
 
 def download_dataset(filename, url, local_path):
@@ -48,7 +54,6 @@ def main():
     filepath = download_dataset(filename, url, local_path)
 
     # Read channel data from UFF file using pyuff_ustb
-    from pyuff_ustb.objects.uff import Uff
 
     uff_file = Uff(filepath)
     channel_data = uff_file.read("channel_data")
@@ -71,8 +76,6 @@ def main():
     first_az = float(sequence[0].source.azimuth)
     last_az = float(sequence[-1].source.azimuth)
     azimuth_axis = np.linspace(first_az, last_az, len(sequence))
-
-    from pyuff_ustb.objects.point import Point
 
     scan = SectorScan()
     scan.__dict__["azimuth_axis"] = azimuth_axis
@@ -97,9 +100,7 @@ def main():
     b_data = mid.go()
 
     # Plot
-    import matplotlib
 
-    matplotlib.use("Agg")
     fig, ax = plot_beamformed_data(b_data, title="Human Heart", dynamic_range=60)
     output_path = os.path.join(os.path.dirname(__file__), "human_heart.png")
     fig.savefig(output_path, dpi=150, bbox_inches="tight")

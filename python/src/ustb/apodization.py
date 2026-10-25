@@ -6,6 +6,8 @@ The geometry and window definitions are ported from +uff/apodization.m.
 """
 
 import numpy as np
+from scipy.signal import convolve2d
+
 from ustb._scan_grid import scan_grid
 from ustb.enums import Wavefront, Window
 
@@ -216,7 +218,6 @@ class Apodization:
         px, py, pz = self._focus_xyz()
         N_pixels, N_waves = px.size, len(self.sequence)
         tilt = self._pair(self.tilt)
-        f_number = self._pair(self.f_number)
         tan_theta = np.zeros((N_pixels, N_waves))
         tan_phi = np.zeros((N_pixels, N_waves))
 
@@ -344,7 +345,6 @@ def _rotate_points(x, y, z, theta, phi):
 
 def _filter2_same(kernel, data):
     """MATLAB filter2(kernel, data, 'same') for 2-D arrays (zero padding)."""
-    from scipy.signal import convolve2d
 
     full = convolve2d(data, kernel[::-1, ::-1], mode="full")
     k0, k1 = kernel.shape

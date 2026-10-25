@@ -43,7 +43,7 @@ def match_pixels(ml_coords, py_coords, atol=1e-6):
         perm[py_group] = ml_group
     assert len(np.unique(perm)) == len(perm), "Pixel matching is not one-to-one"
 
-    for axis, (ml_c, py_c) in enumerate(zip(ml_coords, py_coords)):
+    for axis, (ml_c, py_c) in enumerate(zip(ml_coords, py_coords, strict=True)):
         np.testing.assert_allclose(
             ml_c[perm],
             py_c,

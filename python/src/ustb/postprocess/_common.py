@@ -25,12 +25,14 @@ def resolve_dimension(dimension, N_channels, N_waves):
     if dimension == Dimension.both:
         if N_channels < 2 and N_waves > 1:
             warnings.warn(
-                "Not enough channels to compute factor. Changing dimension to dimension.transmit"
+                "Not enough channels to compute factor. Changing dimension to dimension.transmit",
+                stacklevel=2,
             )
             return Dimension.transmit
         if N_waves < 2 and N_channels > 1:
             warnings.warn(
-                "Not enough waves to compute factor. Changing dimension to dimension.receive"
+                "Not enough waves to compute factor. Changing dimension to dimension.receive",
+                stacklevel=2,
             )
             return Dimension.receive
         if N_waves < 2 and N_channels < 2:

@@ -2,10 +2,11 @@
 
 import numpy as np
 import pytest
-from ustb.postprocess.coherence_factor import CoherenceFactor
-from ustb.beamformed_data import BeamformedData
+
 from ustb.apodization import Apodization
+from ustb.beamformed_data import BeamformedData
 from ustb.enums import Dimension, Window
+from ustb.postprocess.coherence_factor import CoherenceFactor
 
 
 class FakeScan:

@@ -1,6 +1,10 @@
 """BeamformedData container matching MATLAB uff.beamformed_data."""
 
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.animation import FuncAnimation, PillowWriter
+
+from ustb.plotting import plot_beamformed_data
 
 
 class BeamformedData:
@@ -20,8 +24,6 @@ class BeamformedData:
         return 0
 
     def plot(self, title="", dynamic_range=60):
-        from ustb.plotting import plot_beamformed_data
-
         return plot_beamformed_data(self, title=title, dynamic_range=dynamic_range)
 
     def _image_shape(self):
@@ -92,8 +94,6 @@ class BeamformedData:
         Mirrors MATLAB uff.beamformed_data.save_as_gif(filename). Requires
         a single-channel image stack (e.g. dimension.both output).
         """
-        import matplotlib.pyplot as plt
-        from matplotlib.animation import FuncAnimation, PillowWriter
 
         img_stack = self.get_image(compression="log")
         if img_stack.shape[2] != 1:

@@ -5,10 +5,11 @@ The MATLAB comparison is in test_flow_vs_matlab.py.
 
 import numpy as np
 import pytest
+from pyuff_ustb.objects import LinearScan
 
+from ustb import postprocess, preprocess
 from ustb._svd import resolve_cutoff
 from ustb.beamformed_data import BeamformedData
-from ustb import postprocess, preprocess
 
 
 class _Pulse:
@@ -21,8 +22,6 @@ class _ChannelData:
 
 
 def _linear_scan(N_x, N_z, dz=50e-6):
-    from pyuff_ustb.objects import LinearScan
-
     scan = LinearScan()
     scan.__dict__["x_axis"] = np.linspace(-2e-3, 2e-3, N_x)
     scan.__dict__["z_axis"] = 10e-3 + dz * np.arange(N_z)

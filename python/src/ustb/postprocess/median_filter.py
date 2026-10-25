@@ -5,6 +5,7 @@ Applies 2D median filtering to reduce speckle and noise.
 
 import numpy as np
 from scipy.ndimage import median_filter
+
 from ustb.beamformed_data import BeamformedData
 
 

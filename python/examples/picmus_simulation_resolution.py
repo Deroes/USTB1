@@ -4,14 +4,14 @@ Python equivalent of examples/picmus/simulation_resolution_distortion.m.
 75 plane-wave sequence simulated with Field II.
 """
 
-import numpy as np
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
 
 from examples.utils import read_channel_data, read_uff_object, save_image
-from ustb.midprocess import DAS
 from ustb.enums import Dimension, Window
+from ustb.midprocess import DAS
 
 
 def main():

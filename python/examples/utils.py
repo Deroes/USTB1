@@ -2,7 +2,10 @@
 
 import os
 import urllib.request
+
 import numpy as np
+from pyuff_ustb.objects import LinearScan
+from pyuff_ustb.objects.uff import Uff
 
 DATA_URL = "https://zenodo.org/records/20261898/files/"
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data")
@@ -23,7 +26,6 @@ def download_dataset(filename):
 
 def read_channel_data(filename):
     """Download and read channel data from a UFF file."""
-    from pyuff_ustb.objects.uff import Uff
 
     filepath = download_dataset(filename)
     uff_file = Uff(filepath)
@@ -32,7 +34,6 @@ def read_channel_data(filename):
 
 def read_uff_object(filename, name):
     """Read any object from a UFF file."""
-    from pyuff_ustb.objects.uff import Uff
 
     filepath = download_dataset(filename)
     uff_file = Uff(filepath)
@@ -41,7 +42,6 @@ def read_uff_object(filename, name):
 
 def make_linear_scan(channel_data, N_x=256, N_z=256, z_max=50e-3):
     """Create a linear scan from channel data probe geometry."""
-    from pyuff_ustb.objects import LinearScan
 
     probe_x = channel_data.probe.x
     scan = LinearScan()

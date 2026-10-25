@@ -3,7 +3,6 @@
 import os
 import pathlib
 
-import pytest
 from ustb.tools import download, zenodo_dataset_files_base
 
 

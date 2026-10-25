@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ustb"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python reimplementation of the UltraSound ToolBox (USTB) for beamforming, processing, and visualization of ultrasonic signals."
 readme = "README.md"
 license = {text = "MIT"}

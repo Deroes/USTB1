@@ -3,17 +3,32 @@
 Python equivalent of examples/picmus/simulation_contrast_speckle.m.
 """
 
-import matplotlib.pyplot as plt
+import os
 
-from examples.utils import read_channel_data, read_uff_object, save_image
+import matplotlib.pyplot as plt
+from pyuff_ustb.objects.uff import Uff
+
 from ustb.enums import Dimension, Window
 from ustb.midprocess import DAS
+from ustb.tools import download, zenodo_dataset_files_base
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(HERE, "..", "..", "data")
+OUTPUT_PATH = os.path.join(HERE, "output")
 
 
 def main():
     filename = "PICMUS_simulation_contrast_speckle.uff"
-    channel_data = read_channel_data(filename)
-    scan = read_uff_object(filename, "scan")
+    uff_file = Uff(download(filename, zenodo_dataset_files_base(), DATA_PATH))
+    channel_data = uff_file.read("channel_data")
+    scan = uff_file.read("scan")
+
+    print(
+        f"Channel data: {channel_data.N_samples} samples, "
+        f"{channel_data.N_channels} channels, "
+        f"{channel_data.N_waves} waves"
+    )
+    print(f"Scan: {scan.x.size} pixels")
 
     mid = DAS()
     mid.channel_data = channel_data
@@ -26,7 +41,10 @@ def main():
     b_data = mid.go()
 
     fig, ax = b_data.plot(title="PICMUS Simulation Contrast")
-    save_image(fig, "picmus_sim_contrast.png")
+    os.makedirs(OUTPUT_PATH, exist_ok=True)
+    output_file = os.path.join(OUTPUT_PATH, "picmus_sim_contrast.png")
+    fig.savefig(output_file, dpi=150, bbox_inches="tight")
+    print(f"Image saved to {output_file}")
     return b_data
 
 

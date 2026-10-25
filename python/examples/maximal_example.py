@@ -4,20 +4,29 @@ Python equivalent of examples/UiO_course/.../maximal_example.m.
 Pipeline: demodulation -> DAS (transmit dimension) -> coherence factor -> median filter.
 """
 
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 from pyuff_ustb.objects import SectorScan
 from pyuff_ustb.objects.point import Point
+from pyuff_ustb.objects.uff import Uff
 
-from examples.utils import read_channel_data, save_image
 from ustb.enums import Dimension, Window
 from ustb.midprocess import DAS
 from ustb.postprocess import CoherenceFactor, Median
 from ustb.preprocess import FastDemodulation
+from ustb.tools import download, zenodo_dataset_files_base
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(HERE, "..", "..", "data")
+OUTPUT_PATH = os.path.join(HERE, "output")
 
 
 def main():
-    channel_data = read_channel_data("Verasonics_P2-4_parasternal_long_small.uff")
+    filename = "Verasonics_P2-4_parasternal_long_small.uff"
+    filepath = download(filename, zenodo_dataset_files_base(), DATA_PATH)
+    channel_data = Uff(filepath).read("channel_data")
     print(
         f"Channel data: {channel_data.N_samples} samples, "
         f"{channel_data.N_channels} channels, "
@@ -80,10 +89,15 @@ def main():
     print(f"  Median output: {b_data_me.data.shape}")
 
     fig, ax = b_data_me.plot(title="Human Heart (Maximal Example)", dynamic_range=80)
-    save_image(fig, "maximal_example.png")
+    os.makedirs(OUTPUT_PATH, exist_ok=True)
+    output_file = os.path.join(OUTPUT_PATH, "maximal_example.png")
+    fig.savefig(output_file, dpi=150, bbox_inches="tight")
+    print(f"Image saved to {output_file}")
     return b_data_me
 
 
 if __name__ == "__main__":
-    main()
+    b_data_me = main()
+    # Play all frames as a movie loop (keep a reference while it plays)
+    anim = b_data_me.animate(title="Human Heart (Maximal Example)", dynamic_range=80, fps=5)
     plt.show()

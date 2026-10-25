@@ -4,15 +4,26 @@ Python equivalent of examples/uff/CPWC_UFF_Verasonics.m.
 Downloads L7 CPWC data, beamforms with DAS using plane waves and a linear scan.
 """
 
-import matplotlib.pyplot as plt
+import os
 
-from examples.utils import make_linear_scan, read_channel_data, save_image
+import matplotlib.pyplot as plt
+import numpy as np
+from pyuff_ustb.objects import LinearScan
+from pyuff_ustb.objects.uff import Uff
+
 from ustb.enums import Dimension, Window
 from ustb.midprocess import DAS
+from ustb.tools import download, zenodo_dataset_files_base
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(HERE, "..", "..", "data")
+OUTPUT_PATH = os.path.join(HERE, "output")
 
 
 def main():
-    channel_data = read_channel_data("L7_CPWC_193328.uff")
+    filename = "L7_CPWC_193328.uff"
+    filepath = download(filename, zenodo_dataset_files_base(), DATA_PATH)
+    channel_data = Uff(filepath).read("channel_data")
 
     print(
         f"Channel data: {channel_data.N_samples} samples, "
@@ -20,7 +31,11 @@ def main():
         f"{channel_data.N_waves} waves, {channel_data.N_frames} frames"
     )
 
-    scan = make_linear_scan(channel_data, N_x=256, N_z=256, z_max=50e-3)
+    probe_x = channel_data.probe.x
+    scan = LinearScan(
+        x_axis=np.linspace(float(probe_x.min()), float(probe_x.max()), 256),
+        z_axis=np.linspace(0, 50e-3, 256),
+    )
 
     mid = DAS()
     mid.channel_data = channel_data
@@ -33,7 +48,10 @@ def main():
     b_data = mid.go()
 
     fig, ax = b_data.plot(title="CPWC Linear Array (L7)")
-    save_image(fig, "cpwc_linear.png")
+    os.makedirs(OUTPUT_PATH, exist_ok=True)
+    output_file = os.path.join(OUTPUT_PATH, "cpwc_linear.png")
+    fig.savefig(output_file, dpi=150, bbox_inches="tight")
+    print(f"Image saved to {output_file}")
     return b_data
 
 

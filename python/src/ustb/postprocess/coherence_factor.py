@@ -54,8 +54,7 @@ class CoherenceFactor:
                 dimension = Dimension.transmit
             elif N_waves < 2 and N_channels > 1:
                 warnings.warn(
-                    "Not enough waves to compute factor. "
-                    "Changing dimension to dimension.receive"
+                    "Not enough waves to compute factor. Changing dimension to dimension.receive"
                 )
                 dimension = Dimension.receive
             elif N_waves < 2 and N_channels < 2:
@@ -64,11 +63,13 @@ class CoherenceFactor:
 
         rx_apod = (
             self._receive_apodization(N_pixels, N_channels)
-            if dimension != Dimension.transmit else None
+            if dimension != Dimension.transmit
+            else None
         )
         tx_apod = (
             self._transmit_apodization(N_pixels, N_waves)
-            if dimension != Dimension.receive else None
+            if dimension != Dimension.receive
+            else None
         )
 
         threshold = self.active_element_criterium

@@ -6,6 +6,7 @@ Python equivalent of examples/picmus/experiment_resolution_distortion.m.
 
 import numpy as np
 import matplotlib
+
 matplotlib.use("Agg")
 
 from examples.utils import read_channel_data, read_uff_object, save_image
@@ -18,9 +19,11 @@ def main():
     channel_data = read_channel_data(filename)
     scan = read_uff_object(filename, "scan")
 
-    print(f"Channel data: {channel_data.N_samples} samples, "
-          f"{channel_data.N_channels} channels, "
-          f"{channel_data.N_waves} waves")
+    print(
+        f"Channel data: {channel_data.N_samples} samples, "
+        f"{channel_data.N_channels} channels, "
+        f"{channel_data.N_waves} waves"
+    )
     print(f"Scan: {scan.x.size} pixels")
 
     mid = DAS()

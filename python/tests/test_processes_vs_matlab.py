@@ -49,8 +49,9 @@ def ref():
 
     data = (values["input_real"] + 1j * values["input_imag"]).T[perm]  # [pixel, channel]
     b_data = BeamformedData(scan=scan, data=data[:, :, None, None].astype(np.complex64))
-    channel_data = _ChannelData(float(values["sound_speed"].squeeze()),
-                                float(values["center_frequency"].squeeze()))
+    channel_data = _ChannelData(
+        float(values["sound_speed"].squeeze()), float(values["center_frequency"].squeeze())
+    )
 
     def matlab(name):
         if f"{name}_real" in values:

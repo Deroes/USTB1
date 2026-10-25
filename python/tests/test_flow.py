@@ -22,6 +22,7 @@ class _ChannelData:
 
 def _linear_scan(N_x, N_z, dz=50e-6):
     from pyuff_ustb.objects import LinearScan
+
     scan = LinearScan()
     scan.__dict__["x_axis"] = np.linspace(-2e-3, 2e-3, N_x)
     scan.__dict__["z_axis"] = 10e-3 + dz * np.arange(N_z)
@@ -29,12 +30,15 @@ def _linear_scan(N_x, N_z, dz=50e-6):
 
 
 class TestCutoff:
-    @pytest.mark.parametrize("cutoff, expected", [
-        (3, [2, 3, 4, 5]),          # scalar: 3..N (1-based) -> 0-based
-        ([2, 4], [1, 2, 3]),        # two values: range
-        ([2, 4, 6], [1, 3, 5]),     # vector: exactly those
-        ([3, 9], [2, 3, 4, 5]),     # end beyond N_frames: clipped
-    ])
+    @pytest.mark.parametrize(
+        "cutoff, expected",
+        [
+            (3, [2, 3, 4, 5]),  # scalar: 3..N (1-based) -> 0-based
+            ([2, 4], [1, 2, 3]),  # two values: range
+            ([2, 4, 6], [1, 3, 5]),  # vector: exactly those
+            ([3, 9], [2, 3, 4, 5]),  # end beyond N_frames: clipped
+        ],
+    )
     def test_should_follow_the_matlab_rules(self, cutoff, expected):
         np.testing.assert_array_equal(resolve_cutoff(cutoff, 6), expected)
 
@@ -87,8 +91,10 @@ class TestSVDFilter:
 
 
 class TestAutocorrelation:
-    @pytest.mark.parametrize("cls", ["AutocorrelationDisplacementEstimation",
-                                     "ModifiedAutocorrelationDisplacementEstimation"])
+    @pytest.mark.parametrize(
+        "cls",
+        ["AutocorrelationDisplacementEstimation", "ModifiedAutocorrelationDisplacementEstimation"],
+    )
     def test_should_measure_a_known_phase_shift(self, cls):
         """X_{t+1} = X_t exp(i dphi) gives d = -c * dphi / (2 pi) / (2 fc) (MATLAB sign)."""
         N_x, N_z, N_frames, dphi = 6, 30, 10, 0.4
@@ -100,8 +106,10 @@ class TestAutocorrelation:
         speckle = rng.standard_normal(N_x * N_z) + 1j * rng.standard_normal(N_x * N_z)
         axial = np.exp(2j * np.pi * fc / fs * np.tile(np.arange(N_z), N_x))  # z fastest
         frames = np.exp(1j * dphi * np.arange(N_frames))
-        b_data = BeamformedData(scan=scan, data=(np.abs(speckle) * axial)[:, None, None, None]
-                                * frames[None, None, None, :])
+        b_data = BeamformedData(
+            scan=scan,
+            data=(np.abs(speckle) * axial)[:, None, None, None] * frames[None, None, None, :],
+        )
         estimator = getattr(postprocess, cls)()
         estimator.input, estimator.channel_data = b_data, _ChannelData()
         out = estimator.go().data

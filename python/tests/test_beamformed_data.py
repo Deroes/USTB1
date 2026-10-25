@@ -107,7 +107,9 @@ class TestSaveAsGif:
     def test_should_write_gif_file(self, tmp_path):
         scan = FakeLinearScan(x_axis=np.linspace(-1, 1, 6), z_axis=np.linspace(0, 1, 8))
         N_frames = 3
-        data = (np.random.rand(48, 1, 1, N_frames) + 1j * np.random.rand(48, 1, 1, N_frames)).astype(np.complex64)
+        data = (
+            np.random.rand(48, 1, 1, N_frames) + 1j * np.random.rand(48, 1, 1, N_frames)
+        ).astype(np.complex64)
         b_data = BeamformedData(scan=scan, data=data)
 
         out_path = tmp_path / "movie.gif"

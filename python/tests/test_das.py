@@ -33,8 +33,15 @@ class FakePoint:
 
 
 class FakeWave:
-    def __init__(self, wavefront=Wavefront.plane, azimuth=0.0, elevation=0.0,
-                 distance=float("inf"), sound_speed=1540.0, delay=0.0):
+    def __init__(
+        self,
+        wavefront=Wavefront.plane,
+        azimuth=0.0,
+        elevation=0.0,
+        distance=float("inf"),
+        sound_speed=1540.0,
+        delay=0.0,
+    ):
         self.wavefront = wavefront
         self.source = FakePoint(azimuth=azimuth, elevation=elevation, distance=distance)
         if not np.isinf(distance):
@@ -121,7 +128,9 @@ def make_simple_test_setup(N_elements=16, N_samples=512, N_waves=1, c=1540.0, fs
     """Create a minimal synthetic test setup for DAS testing."""
     probe = FakeProbe(N=N_elements, pitch=0.3e-3)
     scan = FakeScan(x=[0.0], z=[30e-3])
-    waves = [FakeWave(wavefront=Wavefront.plane, azimuth=0.0, sound_speed=c) for _ in range(N_waves)]
+    waves = [
+        FakeWave(wavefront=Wavefront.plane, azimuth=0.0, sound_speed=c) for _ in range(N_waves)
+    ]
     data = np.random.randn(N_samples, N_elements, N_waves, 1).astype(np.float32)
     ch_data = FakeChannelData(data, probe, waves, fs=fs, c=c)
     return ch_data, scan
@@ -242,12 +251,12 @@ class TestDASBeamformOutput:
         waves = [FakeWave(wavefront=Wavefront.plane, azimuth=0.0, sound_speed=c)]
 
         # Compute expected round-trip time range for initial_time
-        max_delay = z_focus / c + np.sqrt(probe.x[-1]**2 + z_focus**2) / c
+        max_delay = z_focus / c + np.sqrt(probe.x[-1] ** 2 + z_focus**2) / c
         t0 = z_focus / c * 0.9
 
         data = np.zeros((N_samples, N_elements, 1, 1), dtype=np.complex64)
         for i in range(N_elements):
-            rx_dist = np.sqrt(probe.x[i] ** 2 + z_focus ** 2)
+            rx_dist = np.sqrt(probe.x[i] ** 2 + z_focus**2)
             total_delay = z_focus / c + rx_dist / c
             sample = int((total_delay - t0) * fs)
             if 0 <= sample < N_samples:
@@ -278,7 +287,7 @@ class TestDASBeamformOutput:
         # sub-sample timing differences
         data = np.zeros((N_samples, N_elements, 1, 1), dtype=np.complex64)
         for i in range(N_elements):
-            rx_dist = np.sqrt(probe.x[i] ** 2 + z_target ** 2)
+            rx_dist = np.sqrt(probe.x[i] ** 2 + z_target**2)
             total_delay = z_target / c + rx_dist / c
             center_sample = total_delay * fs
             t = np.arange(N_samples)
@@ -299,7 +308,7 @@ class TestDASBeamformOutput:
         peak_idx = np.argmax(envelope)
         peak_z = z_axis[peak_idx]
         assert abs(peak_z - z_target) < 2e-3, (
-            f"Peak at z={peak_z*1e3:.1f}mm, expected {z_target*1e3:.1f}mm"
+            f"Peak at z={peak_z * 1e3:.1f}mm, expected {z_target * 1e3:.1f}mm"
         )
 
 
@@ -312,9 +321,10 @@ class TestNumbaKernel:
     def test_should_match_numpy_loop(self, dim, w0):
         rng = np.random.default_rng(0)
         N_samples, N_channels, N_waves, N_frames, N_pixels = 200, 6, 3, 2, 50
-        ch_data = (rng.standard_normal((N_samples, N_channels, N_waves, N_frames))
-                   + 1j * rng.standard_normal((N_samples, N_channels, N_waves, N_frames))
-                   ).astype(np.complex64)
+        ch_data = (
+            rng.standard_normal((N_samples, N_channels, N_waves, N_frames))
+            + 1j * rng.standard_normal((N_samples, N_channels, N_waves, N_frames))
+        ).astype(np.complex64)
         fs, t0 = 20e6, 1e-6
         time = (t0 + np.arange(N_samples) / fs).astype(np.float32)
         # Delays partly outside the recorded time, to test the zero padding
@@ -325,8 +335,20 @@ class TestNumbaKernel:
         rx_apo[rx_apo < 0.2] = 0
         tx_apo[:, 1] = 0
 
-        args = (ch_data, time, tx_apo, rx_apo, tx_delay, rx_delay, w0, dim,
-                N_pixels, N_channels, N_waves, N_frames)
+        args = (
+            ch_data,
+            time,
+            tx_apo,
+            rx_apo,
+            tx_delay,
+            rx_delay,
+            w0,
+            dim,
+            N_pixels,
+            N_channels,
+            N_waves,
+            N_frames,
+        )
         fast = DAS._beamform_numba(*args)
         slow = DAS._beamform_numpy(*args)
         assert fast.shape == slow.shape

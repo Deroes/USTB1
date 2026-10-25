@@ -112,8 +112,9 @@ def plot_channel_data(channel_data, n_wave=None, plot_abs=True, title=None):
     if plot_abs:
         fig, ax = plt.subplots(1, 1, figsize=(6, 6))
         img = np.abs(trace)
-        pcm = ax.pcolormesh(np.arange(1, N_channels + 1), time_us, img,
-                             cmap="inferno", shading="gouraud")
+        pcm = ax.pcolormesh(
+            np.arange(1, N_channels + 1), time_us, img, cmap="inferno", shading="gouraud"
+        )
         ax.invert_yaxis()
         ax.set_xlabel("Channel")
         ax.set_ylabel("time [us]")
@@ -124,8 +125,9 @@ def plot_channel_data(channel_data, n_wave=None, plot_abs=True, title=None):
     else:
         fig, axes = plt.subplots(1, 2, figsize=(11, 6))
         for ax, part, label in zip(axes, [trace.real, trace.imag], ["Real", "Imaginary"]):
-            pcm = ax.pcolormesh(np.arange(1, N_channels + 1), time_us, part,
-                                 cmap="inferno", shading="gouraud")
+            pcm = ax.pcolormesh(
+                np.arange(1, N_channels + 1), time_us, part, cmap="inferno", shading="gouraud"
+            )
             ax.invert_yaxis()
             ax.set_xlabel("Channel")
             ax.set_ylabel("time [us]")

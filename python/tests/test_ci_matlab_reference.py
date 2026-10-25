@@ -19,18 +19,23 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
 # (reference file, dataset, example module)
 CASES = [
     ("cpwc_linear.h5", "L7_CPWC_193328.uff", "examples.cpwc_linear"),
-    ("picmus_experiment_resolution.h5", "PICMUS_experiment_resolution_distortion.uff",
-     "examples.picmus_experiment_resolution"),
+    (
+        "picmus_experiment_resolution.h5",
+        "PICMUS_experiment_resolution_distortion.uff",
+        "examples.picmus_experiment_resolution",
+    ),
 ]
 
 
-@pytest.mark.parametrize("ref_file, dataset, example", CASES,
-                         ids=[case[0].removesuffix(".h5") for case in CASES])
+@pytest.mark.parametrize(
+    "ref_file, dataset, example", CASES, ids=[case[0].removesuffix(".h5") for case in CASES]
+)
 def test_should_match_committed_matlab_reference(ref_file, dataset, example):
     if not os.path.exists(os.path.join(DATA_DIR, dataset)):
         pytest.skip(f"Dataset {dataset} not available in data/")
     import importlib
     import matplotlib
+
     matplotlib.use("Agg")
 
     b_data = importlib.import_module(example).main()
@@ -41,5 +46,4 @@ def test_should_match_committed_matlab_reference(ref_file, dataset, example):
     # Coordinates are stored in single precision (~5 nm at 5 cm)
     perm = match_pixels((ml_x, ml_z), (b_data.scan.x, b_data.scan.z), atol=1e-7)
     # Single-precision reference: tolerances as for the full references
-    assert_pixelwise_match(ml_bf[perm], b_data.data, ref_file,
-                           min_corr=0.99999, max_rel_err=1e-3)
+    assert_pixelwise_match(ml_bf[perm], b_data.data, ref_file, min_corr=0.99999, max_rel_err=1e-3)

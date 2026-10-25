@@ -24,6 +24,7 @@ def download_dataset(filename):
 def read_channel_data(filename):
     """Download and read channel data from a UFF file."""
     from pyuff_ustb.objects.uff import Uff
+
     filepath = download_dataset(filename)
     uff_file = Uff(filepath)
     return uff_file.read("channel_data")
@@ -32,6 +33,7 @@ def read_channel_data(filename):
 def read_uff_object(filename, name):
     """Read any object from a UFF file."""
     from pyuff_ustb.objects.uff import Uff
+
     filepath = download_dataset(filename)
     uff_file = Uff(filepath)
     return uff_file.read(name)
@@ -40,6 +42,7 @@ def read_uff_object(filename, name):
 def make_linear_scan(channel_data, N_x=256, N_z=256, z_max=50e-3):
     """Create a linear scan from channel data probe geometry."""
     from pyuff_ustb.objects import LinearScan
+
     probe_x = channel_data.probe.x
     scan = LinearScan()
     scan.__dict__["x_axis"] = np.linspace(float(probe_x.min()), float(probe_x.max()), N_x)

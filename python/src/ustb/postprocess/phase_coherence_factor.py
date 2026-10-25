@@ -12,8 +12,7 @@ import numpy as np
 
 from ustb.beamformed_data import BeamformedData
 from ustb.enums import Dimension
-from ustb.postprocess._common import (as_4d, receive_weights, resolve_dimension,
-                                      transmit_weights)
+from ustb.postprocess._common import as_4d, receive_weights, resolve_dimension, transmit_weights
 
 
 def _weighted_var(values, weights, axis):
@@ -49,11 +48,22 @@ class PhaseCoherenceFactor:
         self.dimension = resolve_dimension(self.dimension, N_channels, N_waves)
         scan = self.input.scan
 
-        rx = (receive_weights(self.receive_apodization, scan, N_pixels, N_channels)
-              if self.dimension != Dimension.transmit else None)
-        tx = (transmit_weights(self.transmit_apodization, scan,
-                               getattr(self.input, "sequence", None), N_pixels, N_waves)
-              if self.dimension != Dimension.receive else None)
+        rx = (
+            receive_weights(self.receive_apodization, scan, N_pixels, N_channels)
+            if self.dimension != Dimension.transmit
+            else None
+        )
+        tx = (
+            transmit_weights(
+                self.transmit_apodization,
+                scan,
+                getattr(self.input, "sequence", None),
+                N_pixels,
+                N_waves,
+            )
+            if self.dimension != Dimension.receive
+            else None
+        )
 
         if self.center_frequency is None:
             aux_data = data
@@ -61,8 +71,12 @@ class PhaseCoherenceFactor:
             # Remove the two-way receive propagation phase (MATLAB: incidence_aperture distance)
             self.receive_apodization.focus = scan
             distance = self.receive_apodization._incidence_aperture(return_distance=True)[2]
-            aux_data = data * np.exp(-2j * np.pi * self.center_frequency * 2 * distance
-                                     / self.sound_speed)[:, :, None, None]
+            aux_data = (
+                data
+                * np.exp(-2j * np.pi * self.center_frequency * 2 * distance / self.sound_speed)[
+                    :, :, None, None
+                ]
+            )
 
         phase = np.angle(aux_data)
         auxiliary = np.where(phase <= 0, phase + np.pi, phase - np.pi)
@@ -84,8 +98,10 @@ class PhaseCoherenceFactor:
 
         std_phase = np.sqrt(_weighted_var(phase, weights, axis))
         std_auxiliary = np.sqrt(_weighted_var(auxiliary, weights, axis))
-        std_complex = np.sqrt(_weighted_var(np.cos(phase), weights, axis)
-                              + _weighted_var(np.sin(phase), weights, axis))
+        std_complex = np.sqrt(
+            _weighted_var(np.cos(phase), weights, axis)
+            + _weighted_var(np.sin(phase), weights, axis)
+        )
 
         fca = 1 - (self.gamma / self.sigma_0) * np.minimum(std_phase, std_auxiliary)
         fca[fca < 0] = 0

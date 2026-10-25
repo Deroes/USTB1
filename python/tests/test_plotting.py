@@ -1,6 +1,7 @@
 """Unit tests for ustb.plotting.plot_channel_data."""
 
 import matplotlib
+
 matplotlib.use("Agg")
 
 import numpy as np
@@ -40,8 +41,9 @@ class TestPlotChannelData:
 
     def test_should_return_two_axes_for_real_imaginary_mode(self):
         N_samples, N_channels, N_waves = 64, 8, 1
-        data = (np.random.randn(N_samples, N_channels, N_waves)
-                + 1j * np.random.randn(N_samples, N_channels, N_waves))
+        data = np.random.randn(N_samples, N_channels, N_waves) + 1j * np.random.randn(
+            N_samples, N_channels, N_waves
+        )
         ch_data = FakeChannelData(data)
 
         fig, axes = plot_channel_data(ch_data, plot_abs=False)

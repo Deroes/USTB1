@@ -62,7 +62,7 @@ def _capon_kernel(data_cube, apod_cube, K, L_elements, reg_coef, forward_backwar
 
             R = np.zeros((L_new, L_new), dtype=np.complex128)
             for l in range(first, last - L_new + 2):
-                X = data_cube[r0:r1, e, l:l + L_new]
+                X = data_cube[r0:r1, e, l : l + L_new]
                 R += np.conj(X).T @ X
             R /= (2 * K + 1) * (M_new - L_new + 1)
             if forward_backward:
@@ -75,7 +75,7 @@ def _capon_kernel(data_cube, apod_cube, K, L_elements, reg_coef, forward_backwar
 
             acc = 0j
             for j in range(first, last - L_new + 2):
-                acc += np.sum(np.conj(w) * np.conj(data_cube[k, e, j:j + L_new]))
+                acc += np.sum(np.conj(w) * np.conj(data_cube[k, e, j : j + L_new]))
             z[k, e] = acc / (M_new - L_new + 1) * M_new
     return z
 
@@ -123,16 +123,22 @@ class CaponMinimumVariance:
         rx, tx = self._apodization(N_pixels, N_channels, N_waves)
 
         def run(cube, apod):
-            image = _capon_kernel(to_image(cube, scan).astype(np.complex128),
-                                  to_image(apod, scan).astype(np.float64),
-                                  int(self._K_samples), float(self.L_elements),
-                                  float(self.regCoef), bool(self.doForwardBackward),
-                                  float(self.active_element_criterium))
+            image = _capon_kernel(
+                to_image(cube, scan).astype(np.complex128),
+                to_image(apod, scan).astype(np.float64),
+                int(self._K_samples),
+                float(self.L_elements),
+                float(self.regCoef),
+                bool(self.doForwardBackward),
+                float(self.active_element_criterium),
+            )
             return from_image(image, scan)
 
         if self.dimension == Dimension.both:
-            warnings.warn("Capon minimum variance on both dimensions simultaneously has not "
-                          "been done in the literature before, and might not make sense.")
+            warnings.warn(
+                "Capon minimum variance on both dimensions simultaneously has not "
+                "been done in the literature before, and might not make sense."
+            )
             out = np.zeros((N_pixels, 1, 1, N_frames), dtype=np.complex64)
             # Channel varies fastest in the combined aperture, as in MATLAB
             apod = (rx[:, :, None] * tx[:, None, :]).reshape(N_pixels, -1, order="F")
@@ -144,14 +150,14 @@ class CaponMinimumVariance:
                 for c in range(N_channels):
                     # MATLAB indexes rx_apodization(n_channel) linearly here, which
                     # picks pixel n_channel; the receive weight of channel c is meant
-                    out[:, c, 0, f] = run(data[:, c, :, f], tx * rx[:, c:c + 1])
+                    out[:, c, 0, f] = run(data[:, c, :, f], tx * rx[:, c : c + 1])
         else:  # receive
             out = np.zeros((N_pixels, 1, N_waves, N_frames), dtype=np.complex64)
             partial = _partial_aperture(self.channel_data)
             for f in range(N_frames):
                 for w in range(N_waves):
                     cube = data[:, :, w, f]
-                    apod = tx[:, w:w + 1] * rx
+                    apod = tx[:, w : w + 1] * rx
                     if partial:
                         apod = np.where(np.abs(cube) < np.finfo(np.float64).eps, 0.0, apod)
                     out[:, 0, w, f] = run(cube, apod)
@@ -163,8 +169,11 @@ class CaponMinimumVariance:
         rx = np.ones((N_pixels, N_channels))
         tx = np.ones((N_pixels, N_waves))
         probe = getattr(self.channel_data, "probe", None)
-        if (self.receive_apodization is not None and self.transmit_apodization is not None
-                and probe is not None):
+        if (
+            self.receive_apodization is not None
+            and self.transmit_apodization is not None
+            and probe is not None
+        ):
             if N_channels > 1 and self.receive_apodization.window != Window.none:
                 self.receive_apodization.probe = probe
                 self.receive_apodization.focus = self.input.scan

@@ -43,8 +43,9 @@ def ref():
     scan = LinearScan()
     scan.__dict__["x_axis"], scan.__dict__["z_axis"] = x_axis, z_axis
     # MATLAB linear-scan pixel order: z varies fastest
-    perm = match_pixels((np.repeat(x_axis, z_axis.size), np.tile(z_axis, x_axis.size)),
-                        (scan.x, scan.z))
+    perm = match_pixels(
+        (np.repeat(x_axis, z_axis.size), np.tile(z_axis, x_axis.size)), (scan.x, scan.z)
+    )
 
     def pixels(name):
         """MATLAB [pixel, 1, 1, frame] data in Python pixel order, as [pixel, frame]."""
@@ -66,8 +67,9 @@ def test_postprocess_svd_filter_should_match_matlab(ref, cutoff, key):
     svd.input, svd.cutoff = b_data, cutoff
     out = svd.go()
     expected = pixels(f"svd_beamformed_{key}")
-    np.testing.assert_allclose(out.data[:, 0, 0, :], expected,
-                               rtol=0, atol=1e-9 * np.abs(expected).max())
+    np.testing.assert_allclose(
+        out.data[:, 0, 0, :], expected, rtol=0, atol=1e-9 * np.abs(expected).max()
+    )
 
 
 def test_preprocess_svd_filter_should_match_matlab(ref):
@@ -87,8 +89,9 @@ def test_autocorrelation_should_match_matlab(ref):
     ac.z_gate, ac.x_gate, ac.packet_size = 4, 2, 6
     out = ac.go()
     expected = pixels("autocorrelation")
-    np.testing.assert_allclose(out.data[:, 0, 0, :], expected,
-                               rtol=0, atol=1e-9 * np.abs(expected).max())
+    np.testing.assert_allclose(
+        out.data[:, 0, 0, :], expected, rtol=0, atol=1e-9 * np.abs(expected).max()
+    )
 
 
 def test_modified_autocorrelation_should_match_matlab(ref):
@@ -98,8 +101,11 @@ def test_modified_autocorrelation_should_match_matlab(ref):
     mac.z_gate, mac.x_gate, mac.packet_size = 4, 2, 6
     out = mac.go()
     expected = pixels("modified_autocorrelation")
-    np.testing.assert_allclose(out.data[:, 0, 0, :], expected,
-                               rtol=0, atol=1e-9 * np.abs(expected).max())
+    np.testing.assert_allclose(
+        out.data[:, 0, 0, :], expected, rtol=0, atol=1e-9 * np.abs(expected).max()
+    )
     # MATLAB stores it as images: [depth, lateral, 1, 1, frame]
-    expected_fc = values["modified_center_frequency"].T.reshape(mac.estimated_center_frequency.shape)
+    expected_fc = values["modified_center_frequency"].T.reshape(
+        mac.estimated_center_frequency.shape
+    )
     np.testing.assert_allclose(mac.estimated_center_frequency, expected_fc, rtol=1e-9, atol=1e-3)

@@ -27,6 +27,7 @@ class _ChannelData:
 
 def _linear_scan(N_x, N_z, dz=15e-6):
     from pyuff_ustb.objects import LinearScan
+
     scan = LinearScan()
     scan.__dict__["x_axis"] = np.linspace(-2e-3, 2e-3, N_x)
     scan.__dict__["z_axis"] = 10e-3 + dz * np.arange(N_z)
@@ -45,7 +46,7 @@ class TestKernelSum:
     def test_should_sum_a_centered_window_truncated_at_the_edges(self):
         values = np.arange(10, dtype=float)[:, None]
         result = _kernel_sum(values, 5)[:, 0]
-        expected = [values[max(0, k - 2):k + 3, 0].sum() for k in range(10)]
+        expected = [values[max(0, k - 2) : k + 3, 0].sum() for k in range(10)]
         np.testing.assert_allclose(result, expected)
 
 
@@ -67,7 +68,7 @@ class TestSLSCDefinition:
         a, b = 1.0, 0.5
         signals = a * rng.standard_normal((20000, 1)) + b * rng.standard_normal((20000, 16))
         values = slsc_lags(signals, K=4001, maxM=3)
-        np.testing.assert_allclose(values[5000:-5000], a ** 2 / (a ** 2 + b ** 2), atol=0.03)
+        np.testing.assert_allclose(values[5000:-5000], a**2 / (a**2 + b**2), atol=0.03)
 
     def test_should_count_lags_over_active_elements_only(self):
         """A dead (all-zero) element is skipped, so its neighbours become lag 1."""
@@ -97,6 +98,7 @@ class TestSLSCProcess:
 
     def test_should_reject_apodization(self):
         from ustb.apodization import Apodization
+
         slsc = postprocess.ShortLagSpatialCoherence()
         slsc.input, slsc.channel_data = _beamformed(), _ChannelData()
         slsc.K_in_lambda = 1
@@ -141,13 +143,16 @@ EXPECTED_SHAPE = {
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
-@pytest.mark.parametrize("process_name, dimensions", [
-    ("GeneralizedCoherenceFactor", list(EXPECTED_SHAPE)),
-    ("PhaseCoherenceFactor", list(EXPECTED_SHAPE)),
-    ("CaponMinimumVariance", list(EXPECTED_SHAPE)),
-    ("DelayMultiplyAndSum", list(EXPECTED_SHAPE)),
-    ("ShortLagSpatialCoherence", [Dimension.receive, Dimension.transmit]),
-])
+@pytest.mark.parametrize(
+    "process_name, dimensions",
+    [
+        ("GeneralizedCoherenceFactor", list(EXPECTED_SHAPE)),
+        ("PhaseCoherenceFactor", list(EXPECTED_SHAPE)),
+        ("CaponMinimumVariance", list(EXPECTED_SHAPE)),
+        ("DelayMultiplyAndSum", list(EXPECTED_SHAPE)),
+        ("ShortLagSpatialCoherence", [Dimension.receive, Dimension.transmit]),
+    ],
+)
 def test_should_produce_finite_output_of_the_right_shape(process_name, dimensions):
     for dimension in dimensions:
         b_data, out = _run(process_name, dimension)

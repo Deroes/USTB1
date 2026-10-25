@@ -53,7 +53,9 @@ class FakeProbe:
 def make_input(N_pixels=5, N_channels=8, N_waves=1, data=None, scan=None):
     if data is None:
         data = np.ones((N_pixels, N_channels, N_waves, 1), dtype=np.complex64)
-    b_data = BeamformedData(scan=scan or FakeScan([0.0] * N_pixels, np.linspace(5e-3, 40e-3, N_pixels)), data=data)
+    b_data = BeamformedData(
+        scan=scan or FakeScan([0.0] * N_pixels, np.linspace(5e-3, 40e-3, N_pixels)), data=data
+    )
     b_data.N_channels = N_channels
     b_data.N_waves = N_waves
     return b_data

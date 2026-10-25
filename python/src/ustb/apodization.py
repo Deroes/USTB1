@@ -104,8 +104,7 @@ class Apodization:
 
         tan_theta, tan_phi = self._incidence_aperture()
         f_number = self._pair(self.f_number)
-        return self._apply_window(np.abs(f_number[0] * tan_theta),
-                                  np.abs(f_number[1] * tan_phi))
+        return self._apply_window(np.abs(f_number[0] * tan_theta), np.abs(f_number[1] * tan_phi))
 
     def _origin_per_pixel(self, origin):
         """Origin coordinates broadcastable against the pixels.
@@ -210,8 +209,7 @@ class Apodization:
 
         tan_theta, tan_phi = self._incidence_wave()
         f_number = self._pair(self.f_number)
-        return self._apply_window(np.abs(f_number[0] * tan_theta),
-                                  np.abs(f_number[1] * tan_phi))
+        return self._apply_window(np.abs(f_number[0] * tan_theta), np.abs(f_number[1] * tan_phi))
 
     def _incidence_wave(self):
         """Tangents of the pixel angles seen from each wave (MATLAB incidence_wave)."""
@@ -241,7 +239,7 @@ class Apodization:
                 # radius here when a probe is set, which it never is for waves.
                 OS = np.array([0.0, 0.0, 1.0])
 
-            zu = OS / np.sqrt(np.sum(OS ** 2))
+            zu = OS / np.sqrt(np.sum(OS**2))
             yu = np.cross(zu, [1.0, 0.0, 0.0])
             xu = np.cross(zu, yu)
 
@@ -253,8 +251,12 @@ class Apodization:
             # Grating lobe masking
             gl = self._pair(self.grating_lobe_angle)
             eps = np.finfo(float).eps
-            zx_dist[np.abs(np.arctan2(OP[:, 0], OP[:, 2]) - np.arctan2(OS[0], OS[2])) > 0.5 * gl[0]] = eps
-            zy_dist[np.abs(np.arctan2(OP[:, 1], OP[:, 2]) - np.arctan2(OS[1], OS[2])) > 0.5 * gl[1]] = eps
+            zx_dist[
+                np.abs(np.arctan2(OP[:, 0], OP[:, 2]) - np.arctan2(OS[0], OS[2])) > 0.5 * gl[0]
+            ] = eps
+            zy_dist[
+                np.abs(np.arctan2(OP[:, 1], OP[:, 2]) - np.arctan2(OS[1], OS[2])) > 0.5 * gl[1]
+            ] = eps
 
             with np.errstate(divide="ignore", invalid="ignore"):
                 tan_theta[:, n] = x_dist / zx_dist
@@ -283,7 +285,7 @@ class Apodization:
             )
 
         A = np.zeros((N_lateral, N_elevation))
-        A[:mla[0], :mla[1]] = 1.0
+        A[: mla[0], : mla[1]] = 1.0
         kernel = np.ones(overlap + 1) / np.prod(overlap + 1)
         B = np.zeros((N_waves, N_lateral, N_elevation))
         for i in range(N_lateral // mla[0]):
@@ -346,7 +348,7 @@ def _filter2_same(kernel, data):
 
     full = convolve2d(data, kernel[::-1, ::-1], mode="full")
     k0, k1 = kernel.shape
-    return full[k0 // 2:k0 // 2 + data.shape[0], k1 // 2:k1 // 2 + data.shape[1]]
+    return full[k0 // 2 : k0 // 2 + data.shape[0], k1 // 2 : k1 // 2 + data.shape[1]]
 
 
 def _windowed(profile):
@@ -355,12 +357,14 @@ def _windowed(profile):
     MATLAB multiplies a 0/1 support mask with the profile, which gives NaN where
     the ratio is infinite or NaN (e.g. pixels at zero depth); here those are 0.
     """
+
     def window(ratio):
         ratio = np.asarray(ratio, dtype=np.float64)
         out = np.zeros_like(ratio)
         inside = ratio <= 0.5
         out[inside] = profile(ratio[inside])
         return out
+
     return window
 
 
@@ -370,6 +374,7 @@ def _tukey(roll):
         out = np.ones_like(r)
         out[taper] = 0.5 * (1 + np.cos(2 * np.pi / roll * (r[taper] - roll / 2 - 0.5)))
         return out
+
     return _windowed(profile)
 
 

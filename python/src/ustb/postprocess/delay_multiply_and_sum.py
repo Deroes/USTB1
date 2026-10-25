@@ -58,8 +58,10 @@ class DelayMultiplyAndSum:
             return from_image(image, scan)
 
         if dimension == Dimension.both:
-            warnings.warn("Delay multiply and sum on both dimensions simultaneously has not "
-                          "been done in the literature before, and might not make sense.")
+            warnings.warn(
+                "Delay multiply and sum on both dimensions simultaneously has not "
+                "been done in the literature before, and might not make sense."
+            )
             out = np.zeros((N_pixels, 1, 1, N_frames), dtype=np.complex64)
             apod = (rx[:, :, None] * tx[:, None, :]).reshape(N_pixels, -1, order="F")
             for f in range(N_frames):
@@ -68,14 +70,14 @@ class DelayMultiplyAndSum:
             out = np.zeros((N_pixels, N_channels, 1, N_frames), dtype=np.complex64)
             for f in range(N_frames):
                 for c in range(N_channels):
-                    out[:, c, 0, f] = run(data[:, c, :, f], tx * rx[:, c:c + 1])
+                    out[:, c, 0, f] = run(data[:, c, :, f], tx * rx[:, c : c + 1])
         elif dimension == Dimension.receive:
             out = np.zeros((N_pixels, 1, N_waves, N_frames), dtype=np.complex64)
             partial = _partial_aperture(self.channel_data)
             for f in range(N_frames):
                 for w in range(N_waves):
                     cube = data[:, :, w, f]
-                    apod = tx[:, w:w + 1] * rx
+                    apod = tx[:, w : w + 1] * rx
                     if partial:
                         apod = np.where(np.abs(cube) < np.finfo(np.float64).eps, 0.0, apod)
                     out[:, 0, w, f] = run(cube, apod)
@@ -106,7 +108,7 @@ class DelayMultiplyAndSum:
         # Sum over pairs i < j of sign(x_i x_j) sqrt(|x_i x_j|) = ((sum s)^2 - sum s^2) / 2
         # with s = sign(x) sqrt(|x|), over the elements with non-zero apodization
         s = np.sign(data_cube) * np.sqrt(np.abs(data_cube)) * (apod_cube != 0)
-        y = ((s.sum(axis=2) ** 2 - (s ** 2).sum(axis=2)) / 2).astype(np.float32)
+        y = ((s.sum(axis=2) ** 2 - (s**2).sum(axis=2)) / 2).astype(np.float32)
 
         b = _kaiser_bandpass(F, fs)
         delay = int(np.floor((len(b) - 1) / 2 + 0.5))  # MATLAB round
@@ -118,8 +120,11 @@ class DelayMultiplyAndSum:
         rx = np.ones((N_pixels, N_channels))
         tx = np.ones((N_pixels, N_waves))
         probe = getattr(self.channel_data, "probe", None)
-        if (self.receive_apodization is not None and self.transmit_apodization is not None
-                and probe is not None):
+        if (
+            self.receive_apodization is not None
+            and self.transmit_apodization is not None
+            and probe is not None
+        ):
             if N_channels > 1 and self.receive_apodization.window != Window.none:
                 self.receive_apodization.probe = probe
                 self.receive_apodization.focus = self.input.scan

@@ -82,8 +82,7 @@ class DAS:
         ym = probe_y[np.newaxis, :] - scan_y[:, np.newaxis]
         zm = probe_z[np.newaxis, :] - scan_z[:, np.newaxis]
         receive_delay = np.float32(
-            np.sqrt(xm**2 + ym**2 + zm**2) / self.channel_data.sound_speed
-            + self.lens_delay
+            np.sqrt(xm**2 + ym**2 + zm**2) / self.channel_data.sound_speed + self.lens_delay
         )
         self.receive_delay = receive_delay
 
@@ -94,13 +93,19 @@ class DAS:
             sequence = [sequence]
 
         for n_wave, wave in enumerate(sequence):
-            wf_val = wave.wavefront.value if hasattr(wave.wavefront, 'value') else int(wave.wavefront)
+            wf_val = (
+                wave.wavefront.value if hasattr(wave.wavefront, "value") else int(wave.wavefront)
+            )
             src = wave.source
             src_x, src_y, src_z = float(src.x), float(src.y), float(src.z)
             src_az = float(src.azimuth)
             src_el = float(src.elevation)
             src_dist = float(src.distance)
-            wave_ss = float(wave.sound_speed) if wave.sound_speed is not None else float(self.channel_data.sound_speed)
+            wave_ss = (
+                float(wave.sound_speed)
+                if wave.sound_speed is not None
+                else float(self.channel_data.sound_speed)
+            )
 
             if wf_val == int(Wavefront.spherical):
                 if np.isinf(src_dist):
@@ -111,15 +116,22 @@ class DAS:
                     )
                 else:
                     dist = ((-1.0) ** (scan_z < src_z)) * np.sqrt(
-                        (src_x - scan_x) ** 2
-                        + (src_y - scan_y) ** 2
-                        + (src_z - scan_z) ** 2
+                        (src_x - scan_x) ** 2 + (src_y - scan_y) ** 2 + (src_z - scan_z) ** 2
                     )
                     if src_z < 0:
                         transmit_delay[:, n_wave] = dist - abs(src_dist)
                     else:
                         self._focused_transmit_delay(
-                            transmit_delay, n_wave, dist, wave, scan_x, scan_y, scan_z, src_az, src_el, src_dist
+                            transmit_delay,
+                            n_wave,
+                            dist,
+                            wave,
+                            scan_x,
+                            scan_y,
+                            scan_z,
+                            src_az,
+                            src_el,
+                            src_dist,
                         )
 
             elif wf_val == int(Wavefront.plane):
@@ -147,6 +159,7 @@ class DAS:
 
         if abs(w0) < np.finfo(np.float32).eps:
             from scipy.signal import hilbert
+
             ch_data = hilbert(ch_data.real.astype(np.float32), axis=0).astype(np.complex64)
         else:
             ch_data = ch_data.astype(np.complex64)
@@ -159,9 +172,18 @@ class DAS:
         print(f"USTB Python beamformer...", end="", flush=True)
         t_start = time.time()
         bf_data = self._beamform(
-            ch_data, ch_data_time, tx_apodization, rx_apodization,
-            transmit_delay, receive_delay, w0, self.dimension,
-            N_pixels, N_channels, N_waves, N_frames,
+            ch_data,
+            ch_data_time,
+            tx_apodization,
+            rx_apodization,
+            transmit_delay,
+            receive_delay,
+            w0,
+            self.dimension,
+            N_pixels,
+            N_channels,
+            N_waves,
+            N_frames,
         )
         self.elapsed_time = time.time() - t_start
         print(f"Completed in {self.elapsed_time:.2f} seconds.")
@@ -172,9 +194,9 @@ class DAS:
                 ref_dist = self.scan.reference_distance.ravel()
             except (NotImplementedError, AttributeError):
                 ref_dist = self.scan.z.ravel()
-            phase = np.exp(
-                -1j * 2 * w0 * ref_dist / self.channel_data.sound_speed
-            ).astype(np.complex64)
+            phase = np.exp(-1j * 2 * w0 * ref_dist / self.channel_data.sound_speed).astype(
+                np.complex64
+            )
             bf_data = bf_data * phase.reshape(-1, *([1] * (bf_data.ndim - 1)))
 
         # Create output
@@ -182,7 +204,9 @@ class DAS:
         self.beamformed_data = b_data
         return b_data
 
-    def _focused_transmit_delay(self, transmit_delay, n_wave, dist, wave, scan_x, scan_y, scan_z, src_az, src_el, src_dist):
+    def _focused_transmit_delay(
+        self, transmit_delay, n_wave, dist, wave, scan_x, scan_y, scan_z, src_az, src_el, src_dist
+    ):
         """Handle focused (virtual source in front of transducer) transmit delays."""
         model = self.spherical_transmit_delay_model
 
@@ -206,21 +230,54 @@ class DAS:
             transmit_delay[:, n_wave] = dist + src_dist
 
     @staticmethod
-    def _beamform(ch_data, ch_data_time, tx_apodization, rx_apodization,
-                  transmit_delay, receive_delay, w0, dim,
-                  N_pixels, N_channels, N_waves, N_frames):
+    def _beamform(
+        ch_data,
+        ch_data_time,
+        tx_apodization,
+        rx_apodization,
+        transmit_delay,
+        receive_delay,
+        w0,
+        dim,
+        N_pixels,
+        N_channels,
+        N_waves,
+        N_frames,
+    ):
         """DAS beamformer matching MATLAB tools.matlab_beamformer.
 
         Uses the numba-compiled kernel when numba is available, otherwise a
         NumPy loop over waves and channels (the same algorithm, much slower).
         """
         if das_kernel is not None:
-            return DAS._beamform_numba(ch_data, ch_data_time, tx_apodization, rx_apodization,
-                                       transmit_delay, receive_delay, w0, dim,
-                                       N_pixels, N_channels, N_waves, N_frames)
-        return DAS._beamform_numpy(ch_data, ch_data_time, tx_apodization, rx_apodization,
-                                   transmit_delay, receive_delay, w0, dim,
-                                   N_pixels, N_channels, N_waves, N_frames)
+            return DAS._beamform_numba(
+                ch_data,
+                ch_data_time,
+                tx_apodization,
+                rx_apodization,
+                transmit_delay,
+                receive_delay,
+                w0,
+                dim,
+                N_pixels,
+                N_channels,
+                N_waves,
+                N_frames,
+            )
+        return DAS._beamform_numpy(
+            ch_data,
+            ch_data_time,
+            tx_apodization,
+            rx_apodization,
+            transmit_delay,
+            receive_delay,
+            w0,
+            dim,
+            N_pixels,
+            N_channels,
+            N_waves,
+            N_frames,
+        )
 
     @staticmethod
     def _output_shape(dim, N_pixels, N_channels, N_waves, N_frames):
@@ -232,27 +289,54 @@ class DAS:
         }[Dimension(dim)]
 
     @staticmethod
-    def _beamform_numba(ch_data, ch_data_time, tx_apodization, rx_apodization,
-                        transmit_delay, receive_delay, w0, dim,
-                        N_pixels, N_channels, N_waves, N_frames):
-        bf_data = np.zeros(DAS._output_shape(dim, N_pixels, N_channels, N_waves, N_frames),
-                           dtype=np.complex64)
+    def _beamform_numba(
+        ch_data,
+        ch_data_time,
+        tx_apodization,
+        rx_apodization,
+        transmit_delay,
+        receive_delay,
+        w0,
+        dim,
+        N_pixels,
+        N_channels,
+        N_waves,
+        N_frames,
+    ):
+        bf_data = np.zeros(
+            DAS._output_shape(dim, N_pixels, N_channels, N_waves, N_frames), dtype=np.complex64
+        )
         t0 = float(ch_data_time[0])
         dt = float(ch_data_time[1] - ch_data_time[0]) if len(ch_data_time) > 1 else 1.0
         das_kernel(
-            np.ascontiguousarray(ch_data, dtype=np.complex64), t0, dt,
+            np.ascontiguousarray(ch_data, dtype=np.complex64),
+            t0,
+            dt,
             np.ascontiguousarray(tx_apodization, dtype=np.float32),
             np.ascontiguousarray(rx_apodization, dtype=np.float32),
             np.ascontiguousarray(transmit_delay, dtype=np.float32),
             np.ascontiguousarray(receive_delay, dtype=np.float32),
-            float(w0), int(dim), bf_data,
+            float(w0),
+            int(dim),
+            bf_data,
         )
         return bf_data
 
     @staticmethod
-    def _beamform_numpy(ch_data, ch_data_time, tx_apodization, rx_apodization,
-                        transmit_delay, receive_delay, w0, dim,
-                        N_pixels, N_channels, N_waves, N_frames):
+    def _beamform_numpy(
+        ch_data,
+        ch_data_time,
+        tx_apodization,
+        rx_apodization,
+        transmit_delay,
+        receive_delay,
+        w0,
+        dim,
+        N_pixels,
+        N_channels,
+        N_waves,
+        N_frames,
+    ):
         """NumPy DAS loop matching MATLAB tools.matlab_beamformer."""
         if dim == Dimension.none:
             bf_data = np.zeros((N_pixels, N_channels, N_waves, N_frames), dtype=np.complex64)
@@ -289,8 +373,7 @@ class DAS:
                     interp_val = np.zeros(N_pixels, dtype=trace.dtype)
                     v = valid
                     interp_val[v] = (
-                        trace[idx_floor[v]] * (1.0 - frac[v])
-                        + trace[idx_floor[v] + 1] * frac[v]
+                        trace[idx_floor[v]] * (1.0 - frac[v]) + trace[idx_floor[v] + 1] * frac[v]
                     )
 
                     temp = apo * interp_val

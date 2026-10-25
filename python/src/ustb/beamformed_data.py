@@ -21,6 +21,7 @@ class BeamformedData:
 
     def plot(self, title="", dynamic_range=60):
         from ustb.plotting import plot_beamformed_data
+
         return plot_beamformed_data(self, title=title, dynamic_range=dynamic_range)
 
     def _image_shape(self):
@@ -105,12 +106,15 @@ class BeamformedData:
 
         fig, ax = plt.subplots()
         frame0 = img_stack[:, :, 0].T
-        im = ax.imshow(frame0, cmap="gray", vmin=-dynamic_range, vmax=0,
-                        origin="upper", aspect="auto")
+        im = ax.imshow(
+            frame0, cmap="gray", vmin=-dynamic_range, vmax=0, origin="upper", aspect="auto"
+        )
         ax.axis("off")
 
         def _title(i):
-            return f"{title}, Frame = {i + 1}/{N_frames}" if title else f"Frame = {i + 1}/{N_frames}"
+            return (
+                f"{title}, Frame = {i + 1}/{N_frames}" if title else f"Frame = {i + 1}/{N_frames}"
+            )
 
         ax.set_title(_title(0))
 

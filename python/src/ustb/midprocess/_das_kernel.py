@@ -15,8 +15,9 @@ _NONE, _RECEIVE, _TRANSMIT, _BOTH = 0, 1, 2, 3
 
 
 @njit(parallel=True, fastmath=False, cache=True)
-def das_kernel(ch_data, t0, dt, tx_apodization, rx_apodization,
-               transmit_delay, receive_delay, w0, dim, bf_data):
+def das_kernel(
+    ch_data, t0, dt, tx_apodization, rx_apodization, transmit_delay, receive_delay, w0, dim, bf_data
+):
     """Beamform into ``bf_data`` (preallocated, zeroed, shaped by ``dim``).
 
     ch_data:         [samples, channels, waves, frames] complex64
@@ -49,8 +50,10 @@ def das_kernel(ch_data, t0, dt, tx_apodization, rx_apodization,
                 else:
                     weight = apo + 0j
                 for n_frame in range(N_frames):
-                    value = weight * (ch_data[i0, n_rx, n_wave, n_frame] * (1.0 - frac)
-                                      + ch_data[i0 + 1, n_rx, n_wave, n_frame] * frac)
+                    value = weight * (
+                        ch_data[i0, n_rx, n_wave, n_frame] * (1.0 - frac)
+                        + ch_data[i0 + 1, n_rx, n_wave, n_frame] * frac
+                    )
                     if dim == _NONE:
                         bf_data[p, n_rx, n_wave, n_frame] = value
                     elif dim == _RECEIVE:

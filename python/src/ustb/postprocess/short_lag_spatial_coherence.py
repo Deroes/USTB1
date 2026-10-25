@@ -37,7 +37,7 @@ def slsc_lags(signals, K, maxM):
     Returns [depth, maxM]; lag m (1-based) pairs elements i and i + m.
     """
     N, E = signals.shape
-    energy = _kernel_sum(signals ** 2, K)
+    energy = _kernel_sum(signals**2, K)
     values = np.zeros((N, maxM))
     for m in range(1, min(maxM, E - 1) + 1):
         cross = _kernel_sum(signals[:, :-m] * signals[:, m:], K)
@@ -94,7 +94,9 @@ class ShortLagSpatialCoherence:
             raise ValueError("Set input, channel_data and then K_in_lambda before go()")
         for apodization in (self.receive_apodization, self.transmit_apodization):
             if apodization is not None and apodization.window != Window.none:
-                raise ValueError("Please use window none (no apodization) with the SLSC beamformer.")
+                raise ValueError(
+                    "Please use window none (no apodization) with the SLSC beamformer."
+                )
 
         if self.dimension is None:
             self.dimension = Dimension.receive if N_channels > 1 else Dimension.transmit
@@ -108,15 +110,21 @@ class ShortLagSpatialCoherence:
             out = np.zeros((N_pixels, 1, N_waves, N_frames), dtype=np.float32)
             for f in range(N_frames):
                 for w in range(N_waves):
-                    out[:, 0, w, f] = from_image(self._image(to_image(data[:, :, w, f], scan)), scan)
+                    out[:, 0, w, f] = from_image(
+                        self._image(to_image(data[:, :, w, f], scan)), scan
+                    )
         elif dimension == Dimension.transmit:
             out = np.zeros((N_pixels, N_channels, 1, N_frames), dtype=np.float32)
             for f in range(N_frames):
                 for c in range(N_channels):
-                    out[:, c, 0, f] = from_image(self._image(to_image(data[:, c, :, f], scan)), scan)
+                    out[:, c, 0, f] = from_image(
+                        self._image(to_image(data[:, c, :, f], scan)), scan
+                    )
         elif dimension == Dimension.both:
-            raise ValueError("Both dimensions are not defined for SLSC. "
-                             "Consider using transmit or receive dimensions.")
+            raise ValueError(
+                "Both dimensions are not defined for SLSC. "
+                "Consider using transmit or receive dimensions."
+            )
         else:
             raise ValueError(f"Unsupported dimension: {self.dimension}")
 

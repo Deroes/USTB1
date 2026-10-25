@@ -5,6 +5,7 @@ Python equivalent of examples/picmus/experiment_contrast_speckle.m.
 
 import numpy as np
 import matplotlib
+
 matplotlib.use("Agg")
 
 from examples.utils import read_channel_data, read_uff_object, save_image

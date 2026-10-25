@@ -6,6 +6,7 @@ Downloads L7 CPWC data, beamforms with DAS using plane waves and a linear scan.
 
 import numpy as np
 import matplotlib
+
 matplotlib.use("Agg")
 
 from examples.utils import read_channel_data, make_linear_scan, save_image
@@ -16,9 +17,11 @@ from ustb.enums import Dimension, Window
 def main():
     channel_data = read_channel_data("L7_CPWC_193328.uff")
 
-    print(f"Channel data: {channel_data.N_samples} samples, "
-          f"{channel_data.N_channels} channels, "
-          f"{channel_data.N_waves} waves, {channel_data.N_frames} frames")
+    print(
+        f"Channel data: {channel_data.N_samples} samples, "
+        f"{channel_data.N_channels} channels, "
+        f"{channel_data.N_waves} waves, {channel_data.N_frames} frames"
+    )
 
     scan = make_linear_scan(channel_data, N_x=256, N_z=256, z_max=50e-3)
 

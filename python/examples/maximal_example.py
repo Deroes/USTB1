@@ -6,6 +6,7 @@ Pipeline: demodulation -> DAS (transmit dimension) -> coherence factor -> median
 
 import numpy as np
 import matplotlib
+
 matplotlib.use("Agg")
 
 from examples.utils import read_channel_data, save_image
@@ -19,9 +20,11 @@ from ustb.enums import Dimension, Window
 
 def main():
     channel_data = read_channel_data("Verasonics_P2-4_parasternal_long_small.uff")
-    print(f"Channel data: {channel_data.N_samples} samples, "
-          f"{channel_data.N_channels} channels, "
-          f"{channel_data.N_waves} waves, {channel_data.N_frames} frames")
+    print(
+        f"Channel data: {channel_data.N_samples} samples, "
+        f"{channel_data.N_channels} channels, "
+        f"{channel_data.N_waves} waves, {channel_data.N_frames} frames"
+    )
 
     sequence = channel_data.sequence
     if not isinstance(sequence, (list, tuple)):
@@ -48,8 +51,10 @@ def main():
     demod.modulation_frequency = float(channel_data.pulse.center_frequency)
     demod.input = channel_data
     channel_data_demod = demod.go()
-    print(f"  Demodulated: {channel_data_demod.N_samples} samples, "
-          f"fc={channel_data_demod.modulation_frequency/1e6:.1f} MHz")
+    print(
+        f"  Demodulated: {channel_data_demod.N_samples} samples, "
+        f"fc={channel_data_demod.modulation_frequency / 1e6:.1f} MHz"
+    )
 
     # Step 2: DAS beamforming (transmit dimension only — keep Rx channels)
     print("Step 2: DAS (dimension=transmit)...")

@@ -24,12 +24,14 @@ def resolve_dimension(dimension, N_channels, N_waves):
         raise ValueError("Not enough waves to compute factor")
     if dimension == Dimension.both:
         if N_channels < 2 and N_waves > 1:
-            warnings.warn("Not enough channels to compute factor. "
-                          "Changing dimension to dimension.transmit")
+            warnings.warn(
+                "Not enough channels to compute factor. Changing dimension to dimension.transmit"
+            )
             return Dimension.transmit
         if N_waves < 2 and N_channels > 1:
-            warnings.warn("Not enough waves to compute factor. "
-                          "Changing dimension to dimension.receive")
+            warnings.warn(
+                "Not enough waves to compute factor. Changing dimension to dimension.receive"
+            )
             return Dimension.receive
         if N_waves < 2 and N_channels < 2:
             raise ValueError("Not enough waves and channels to compute factor")
@@ -46,8 +48,11 @@ def receive_weights(apodization, scan, N_pixels, N_channels):
 
 def transmit_weights(apodization, scan, sequence, N_pixels, N_waves):
     """Transmit apodization ``[pixel, wave]``; ones when unset, window none or no sequence."""
-    if (apodization is None or apodization.window == Window.none
-            or (apodization.sequence is None and sequence is None)):
+    if (
+        apodization is None
+        or apodization.window == Window.none
+        or (apodization.sequence is None and sequence is None)
+    ):
         return np.ones((N_pixels, N_waves))
     apodization.focus = scan
     if apodization.sequence is None:

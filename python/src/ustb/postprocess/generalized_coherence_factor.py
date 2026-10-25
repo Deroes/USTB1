@@ -38,7 +38,7 @@ class GeneralizedCoherenceFactor:
             if M0 + 1 > N:
                 raise ValueError(f"M0 = {M0} needs at least {M0 + 1} elements (or waves); got {N}")
             # MATLAB [1:M0+1, N-M0+1:N]; overlapping indices are counted twice there too
-            return np.r_[0:M0 + 1, N - M0:N]
+            return np.r_[0 : M0 + 1, N - M0 : N]
         return np.array([0])
 
     def go(self):
@@ -46,10 +46,16 @@ class GeneralizedCoherenceFactor:
         N_pixels, N_channels, N_waves, N_frames = data.shape
         self.dimension = resolve_dimension(self.dimension, N_channels, N_waves)
         # Only the axes that are summed are checked (MATLAB only indexes those)
-        aperture = (self._low_frequency_indices(N_channels, self.M0)
-                    if self.dimension != Dimension.transmit else None)
-        waves = (self._low_frequency_indices(N_waves, self.M0)
-                 if self.dimension != Dimension.receive else None)
+        aperture = (
+            self._low_frequency_indices(N_channels, self.M0)
+            if self.dimension != Dimension.transmit
+            else None
+        )
+        waves = (
+            self._low_frequency_indices(N_waves, self.M0)
+            if self.dimension != Dimension.receive
+            else None
+        )
 
         if self.dimension == Dimension.both:
             coherent_sum = data.sum(axis=(1, 2), keepdims=True)
@@ -74,6 +80,7 @@ class GeneralizedCoherenceFactor:
         gcf[np.isnan(gcf)] = 0
 
         self.GCF = BeamformedData(scan=self.input.scan, data=gcf.astype(np.float32))
-        self.output = BeamformedData(scan=self.input.scan,
-                                     data=(gcf * coherent_sum).astype(np.complex64))
+        self.output = BeamformedData(
+            scan=self.input.scan, data=(gcf * coherent_sum).astype(np.complex64)
+        )
         return self.output

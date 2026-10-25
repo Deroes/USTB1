@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "ruff"]
 
 [project.urls]
 Homepage = "https://www.ustb.no"
@@ -43,3 +43,13 @@ Documentation = "https://olemarius90.github.io/USTB/documentation.html"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ustb"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "NPY", "PLC0415"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ustb", "examples"]

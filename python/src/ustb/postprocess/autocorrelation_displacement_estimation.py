@@ -51,8 +51,9 @@ class AutocorrelationDisplacementEstimation:
         if N_frames <= self.packet_size:
             raise ValueError("The number of frames needs to be higher than the packet size")
         if N_rx != 1 or N_tx != 1:
-            raise ValueError("Displacement estimation can only be used between frames "
-                             "(one channel and one wave)")
+            raise ValueError(
+                "Displacement estimation can only be used between frames (one channel and one wave)"
+            )
         if self.z_gate % 2 or self.x_gate % 2:
             raise ValueError("Please use even numbers for z_gate and x_gate")
 
@@ -65,7 +66,7 @@ class AutocorrelationDisplacementEstimation:
         rows = slice(U // 2 - 1, images.shape[0] - U // 2 - 1)
         cols = slice(V // 2 - 1, images.shape[1] - V // 2)
         for n in range(N_out):
-            packet = images[:, :, n:n + self.packet_size]
+            packet = images[:, :, n : n + self.packet_size]
             gated = np.zeros(images.shape[:2])
             gated[rows, cols] = self._estimate(packet, n, rows, cols)
             displacement[:, 0, 0, n] = from_image(gated, scan)
@@ -77,8 +78,9 @@ class AutocorrelationDisplacementEstimation:
         pass
 
     def _lag_one_temporal(self, X):
-        return _gate_sum(np.sum(X[:-1, :, :-1] * np.conj(X[:-1, :, 1:]), axis=2),
-                         self.z_gate, self.x_gate)
+        return _gate_sum(
+            np.sum(X[:-1, :, :-1] * np.conj(X[:-1, :, 1:]), axis=2), self.z_gate, self.x_gate
+        )
 
     def _estimate(self, X, n, rows, cols):
         f_hat = np.angle(self._lag_one_temporal(X)) / (2 * np.pi)

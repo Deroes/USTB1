@@ -27,8 +27,9 @@ def assert_matches_matlab(ref_file, b_data, name):
         ml_bf = (f["bf_real"][:] + 1j * f["bf_imag"][:]).T  # -> [pixel, ch, wave, frame]
         ml_x, ml_z = f["scan_x"][:], f["scan_z"][:]
     perm = match_pixels((ml_x, ml_z), (b_data.scan.x, b_data.scan.z))
-    assert_pixelwise_match(ml_bf[perm], b_data.data, name,
-                           min_corr=MIN_ENVELOPE_CORR, max_rel_err=MAX_RELATIVE_ERROR)
+    assert_pixelwise_match(
+        ml_bf[perm], b_data.data, name, min_corr=MIN_ENVELOPE_CORR, max_rel_err=MAX_RELATIVE_ERROR
+    )
 
 
 class TestCPWCLinear:
@@ -40,7 +41,9 @@ class TestCPWCLinear:
         if not os.path.exists(self.DATA):
             pytest.skip("Dataset not available")
         from examples.cpwc_linear import main
-        import matplotlib; matplotlib.use("Agg")
+        import matplotlib
+
+        matplotlib.use("Agg")
         return main()
 
     @pytest.mark.skipif(not os.path.exists(REF), reason="Reference not available")
@@ -63,7 +66,9 @@ class TestPICMUSExperimentResolution:
         if not os.path.exists(self.DATA):
             pytest.skip("Dataset not available")
         from examples.picmus_experiment_resolution import main
-        import matplotlib; matplotlib.use("Agg")
+        import matplotlib
+
+        matplotlib.use("Agg")
         return main()
 
     @pytest.mark.skipif(not os.path.exists(REF), reason="Reference not available")
@@ -83,7 +88,9 @@ class TestPICMUSSimulationResolution:
         if not os.path.exists(self.DATA):
             pytest.skip("Dataset not available")
         from examples.picmus_simulation_resolution import main
-        import matplotlib; matplotlib.use("Agg")
+        import matplotlib
+
+        matplotlib.use("Agg")
         return main()
 
     @pytest.mark.skipif(not os.path.exists(REF), reason="Reference not available")
@@ -103,7 +110,9 @@ class TestPICMUSExperimentContrast:
         if not os.path.exists(self.DATA):
             pytest.skip("Dataset not available")
         from examples.picmus_experiment_contrast import main
-        import matplotlib; matplotlib.use("Agg")
+        import matplotlib
+
+        matplotlib.use("Agg")
         return main()
 
     @pytest.mark.skipif(not os.path.exists(REF), reason="Reference not available")
@@ -123,7 +132,9 @@ class TestPICMUSSimulationContrast:
         if not os.path.exists(self.DATA):
             pytest.skip("Dataset not available")
         from examples.picmus_simulation_contrast import main
-        import matplotlib; matplotlib.use("Agg")
+        import matplotlib
+
+        matplotlib.use("Agg")
         return main()
 
     @pytest.mark.skipif(not os.path.exists(REF), reason="Reference not available")

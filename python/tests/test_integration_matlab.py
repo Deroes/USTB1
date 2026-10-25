@@ -12,12 +12,13 @@ import h5py
 from tests.matlab_compare import match_pixels, assert_pixelwise_match
 
 REFERENCE_FILE = os.path.join(os.path.dirname(__file__), "matlab_reference.h5")
-DATA_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "data",
-                         "Verasonics_P2-4_parasternal_long_small.uff")
+DATA_FILE = os.path.join(
+    os.path.dirname(__file__), "..", "..", "data", "Verasonics_P2-4_parasternal_long_small.uff"
+)
 
 pytestmark = pytest.mark.skipif(
     not os.path.exists(REFERENCE_FILE) or not os.path.exists(DATA_FILE),
-    reason="MATLAB reference data or UFF dataset not available"
+    reason="MATLAB reference data or UFF dataset not available",
 )
 
 
@@ -105,16 +106,22 @@ class TestScanCoordinates:
 class TestReceiveDelay:
     def test_should_match_matlab_per_pixel(self, matlab_ref, python_result, perm):
         np.testing.assert_allclose(
-            python_result["receive_delay"], matlab_ref["receive_delay"][perm],
-            rtol=1e-5, atol=1e-10, err_msg="Receive delay differs from MATLAB",
+            python_result["receive_delay"],
+            matlab_ref["receive_delay"][perm],
+            rtol=1e-5,
+            atol=1e-10,
+            err_msg="Receive delay differs from MATLAB",
         )
 
 
 class TestTransmitDelay:
     def test_should_match_matlab_per_pixel(self, matlab_ref, python_result, perm):
         np.testing.assert_allclose(
-            python_result["transmit_delay"], matlab_ref["transmit_delay"][perm],
-            rtol=1e-5, atol=1e-10, err_msg="Transmit delay differs from MATLAB",
+            python_result["transmit_delay"],
+            matlab_ref["transmit_delay"][perm],
+            rtol=1e-5,
+            atol=1e-10,
+            err_msg="Transmit delay differs from MATLAB",
         )
 
 
@@ -127,6 +134,9 @@ class TestBeamformedOutput:
         depth-0 row at the origin (paired by azimuth index in match_pixels)."""
         ml_bf = (matlab_ref["bf_real"] + 1j * matlab_ref["bf_imag"])[perm]
         assert_pixelwise_match(
-            ml_bf, python_result["bf_data"], "Verasonics P2-4 sector scan",
-            min_corr=0.99999, max_rel_err=1e-3,
+            ml_bf,
+            python_result["bf_data"],
+            "Verasonics P2-4 sector scan",
+            min_corr=0.99999,
+            max_rel_err=1e-3,
         )

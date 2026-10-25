@@ -23,6 +23,7 @@ class SVDFilter:
         if self.cutoff is None:
             raise ValueError("Set cutoff before go()")
         data = as_4d(self.input.data)
-        self.output = BeamformedData(scan=self.input.scan,
-                                     data=svd_filter_frames(data, self.cutoff))
+        self.output = BeamformedData(
+            scan=self.input.scan, data=svd_filter_frames(data, self.cutoff)
+        )
         return self.output

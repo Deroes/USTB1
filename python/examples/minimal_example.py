@@ -49,13 +49,16 @@ def main():
 
     # Read channel data from UFF file using pyuff_ustb
     from pyuff_ustb.objects.uff import Uff
+
     uff_file = Uff(filepath)
     channel_data = uff_file.read("channel_data")
 
-    print(f"Channel data: {channel_data.N_samples} samples, "
-          f"{channel_data.N_channels} channels, "
-          f"{channel_data.N_waves} waves, "
-          f"{channel_data.N_frames} frames")
+    print(
+        f"Channel data: {channel_data.N_samples} samples, "
+        f"{channel_data.N_channels} channels, "
+        f"{channel_data.N_waves} waves, "
+        f"{channel_data.N_frames} frames"
+    )
     print(f"Sound speed: {channel_data.sound_speed} m/s")
     print(f"Sampling frequency: {channel_data.sampling_frequency / 1e6:.1f} MHz")
 
@@ -70,6 +73,7 @@ def main():
     azimuth_axis = np.linspace(first_az, last_az, len(sequence))
 
     from pyuff_ustb.objects.point import Point
+
     scan = SectorScan()
     scan.__dict__["azimuth_axis"] = azimuth_axis
     scan.__dict__["depth_axis"] = depth_axis
@@ -94,6 +98,7 @@ def main():
 
     # Plot
     import matplotlib
+
     matplotlib.use("Agg")
     fig, ax = plot_beamformed_data(b_data, title="Human Heart", dynamic_range=60)
     output_path = os.path.join(os.path.dirname(__file__), "human_heart.png")

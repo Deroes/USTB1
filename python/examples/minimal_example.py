@@ -39,7 +39,7 @@ except NameError:  # Interactive Window runs from the file's folder
 
 
 # %% Download and read dataset
-data_path = os.path.join(here, "..", "data")
+data_path = os.path.join(here, "..", "..", "data")
 filename = "Verasonics_P2-4_parasternal_long_small.uff"
 filepath = download(filename, zenodo_dataset_files_base(), data_path)
 
@@ -86,7 +86,8 @@ b_data = mid.go()
 
 # %% Plot
 fig, ax = plot_beamformed_data(b_data, title="Human Heart", dynamic_range=60)
-output_path = os.path.join(here, "human_heart.png")
+output_path = os.path.join(here, "output", "human_heart.png")
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
 fig.savefig(output_path, dpi=150, bbox_inches="tight")
 print(f"Image saved to {output_path}")
 

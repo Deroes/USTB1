@@ -4,11 +4,8 @@ Python equivalent of examples/UiO_course/.../maximal_example.m.
 Pipeline: demodulation -> DAS (transmit dimension) -> coherence factor -> median filter.
 """
 
-import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
-
-matplotlib.use("Agg")
-
 from pyuff_ustb.objects import SectorScan
 from pyuff_ustb.objects.point import Point
 
@@ -89,3 +86,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    plt.show()

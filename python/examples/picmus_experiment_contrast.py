@@ -3,10 +3,7 @@
 Python equivalent of examples/picmus/experiment_contrast_speckle.m.
 """
 
-import matplotlib
-import numpy as np
-
-matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 from examples.utils import read_channel_data, read_uff_object, save_image
 from ustb.enums import Dimension, Window
@@ -23,9 +20,9 @@ def main():
     mid.scan = scan
     mid.dimension = Dimension.both
     mid.receive_apodization.window = Window.tukey50
-    mid.receive_apodization.f_number = np.array([1.7, 1.7])
+    mid.receive_apodization.f_number = 1.7
     mid.transmit_apodization.window = Window.tukey50
-    mid.transmit_apodization.f_number = np.array([1.7, 1.7])
+    mid.transmit_apodization.f_number = 1.7
     b_data = mid.go()
 
     fig, ax = b_data.plot(title="PICMUS Experiment Contrast")
@@ -35,3 +32,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    plt.show()

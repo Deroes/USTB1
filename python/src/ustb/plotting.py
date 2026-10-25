@@ -4,22 +4,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_beamformed_data(b_data, title="", dynamic_range=60):
+def plot_beamformed_data(b_data, title="", dynamic_range=60, frame=0):
     """Plot beamformed data as a B-mode image.
 
     For sector scans, displays scan-converted (fan-shaped) images using the
     physical (x, z) pixel coordinates, matching MATLAB's pcolor-based display.
     For linear scans, displays a rectangular image.
+
+    ``frame`` selects which frame of multi-frame data to plot (0-based). The
+    image is normalized to the peak of that frame.
     """
     scan = b_data.scan
     data = np.array(b_data.data)
-
-    if data.ndim == 4:
-        data = data[:, 0, 0, 0]
-    elif data.ndim == 3:
-        data = data[:, 0, 0]
-    elif data.ndim == 2:
-        data = data[:, 0]
+    while data.ndim < 4:
+        data = data[..., np.newaxis]
+    data = data[:, 0, 0, frame]
 
     envelope = np.abs(data)
     envelope[envelope < np.finfo(float).eps] = np.finfo(float).eps

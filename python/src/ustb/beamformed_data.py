@@ -23,8 +23,8 @@ class BeamformedData:
             return self.data.shape[0]
         return 0
 
-    def plot(self, title="", dynamic_range=60):
-        return plot_beamformed_data(self, title=title, dynamic_range=dynamic_range)
+    def plot(self, title="", dynamic_range=60, frame=0):
+        return plot_beamformed_data(self, title=title, dynamic_range=dynamic_range, frame=frame)
 
     def _image_shape(self):
         """Return (N_rows, N_cols) for reshaping self.data's pixel axis.

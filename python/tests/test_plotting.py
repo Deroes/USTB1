@@ -1,4 +1,4 @@
-"""Unit tests for ustb.plotting.plot_channel_data."""
+"""Unit tests for ustb.plotting."""
 
 import matplotlib
 
@@ -7,7 +7,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ustb.plotting import plot_channel_data
+from ustb.plotting import plot_beamformed_data, plot_channel_data
 
 rng = np.random.default_rng(0)
 
@@ -62,4 +62,40 @@ class TestPlotChannelData:
         fig, ax = plot_channel_data(ch_data)
 
         assert fig is not None
+        plt.close(fig)
+
+
+class FakeBeamformedData:
+    def __init__(self, data):
+        self.data = data
+        self.scan = object()  # no axes: falls back to a 1D line plot
+
+
+class TestPlotBeamformedData:
+    def test_should_plot_first_frame_by_default(self):
+        data = np.zeros((2, 1, 1, 3))
+        data[:, 0, 0, 0] = [1.0, 0.1]
+        data[:, 0, 0, 2] = [0.1, 1.0]
+
+        fig, ax = plot_beamformed_data(FakeBeamformedData(data))
+
+        np.testing.assert_allclose(ax.lines[0].get_ydata(), [0.0, -20.0])
+        plt.close(fig)
+
+    def test_should_plot_selected_frame(self):
+        data = np.zeros((2, 1, 1, 3))
+        data[:, 0, 0, 0] = [1.0, 0.1]
+        data[:, 0, 0, 2] = [0.1, 1.0]
+
+        fig, ax = plot_beamformed_data(FakeBeamformedData(data), frame=2)
+
+        np.testing.assert_allclose(ax.lines[0].get_ydata(), [-20.0, 0.0])
+        plt.close(fig)
+
+    def test_should_handle_2d_input(self):
+        data = np.array([[1.0], [0.1]])
+
+        fig, ax = plot_beamformed_data(FakeBeamformedData(data))
+
+        np.testing.assert_allclose(ax.lines[0].get_ydata(), [0.0, -20.0])
         plt.close(fig)

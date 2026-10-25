@@ -70,3 +70,15 @@ jobs:
       - name: Run unit tests
         working-directory: python
         run: pytest tests/ -v -rs
+
+  # Single status for branch protection, which requires a check named
+  # "Python Unit Tests"; the matrix jobs above report one check per version.
+  summary:
+    name: Python Unit Tests
+    if: always()
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check that lint and all Python versions passed
+        run: |
+          [ "${{ needs.lint.result }}" = "success" ] && [ "${{ needs.test.result }}" = "success" ]
